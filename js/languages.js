@@ -929,6 +929,9 @@ async function translateAllText() {
             </div>
             <h3 class="modal-title">Translating...</h3>
             <p class="modal-message" id="translate-progress-text">Sending to AI...</p>
+            <div style="margin: 14px auto 4px; width: 82%; background: var(--bg-tertiary, #2a2a2a); border-radius: 99px; height: 5px; overflow: hidden;">
+                <div id="translate-progress-bar" style="height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); width: 0%; transition: width 0.45s ease; border-radius: 99px;"></div>
+            </div>
             <p class="modal-message" id="translate-progress-detail" style="font-size: 11px; color: var(--text-tertiary); margin-top: 8px;"></p>
         </div>
         <style>
@@ -942,6 +945,30 @@ async function translateAllText() {
 
   const progressText = document.getElementById("translate-progress-text");
   const progressDetail = document.getElementById("translate-progress-detail");
+  const progressBar = document.getElementById("translate-progress-bar");
+
+  let _progressValue = 0;
+  let _progressInterval = null;
+
+  const setProgress = (pct) => {
+    _progressValue = pct;
+    if (progressBar) progressBar.style.width = pct + "%";
+  };
+  const startWaitProgress = () => {
+    setProgress(5);
+    _progressInterval = setInterval(() => {
+      if (_progressValue < 80)
+        setProgress(
+          Math.min(80, _progressValue + (80 - _progressValue) * 0.06),
+        );
+    }, 500);
+  };
+  const stopWaitProgress = () => {
+    if (_progressInterval) {
+      clearInterval(_progressInterval);
+      _progressInterval = null;
+    }
+  };
 
   // Helper to update status
   const updateStatus = (text, detail = "") => {
@@ -953,6 +980,7 @@ async function translateAllText() {
     "Sending to AI...",
     `${textsToTranslate.length} texts to ${targetLangs.length} languages using ${providerConfig.name}`,
   );
+  startWaitProgress();
 
   try {
     // Build a single prompt with all texts
@@ -1029,6 +1057,8 @@ Translate to these language codes: ${targetLangs.join(", ")}${customInstructions
       responseText = await translateWithGoogle(apiKey, prompt);
     }
 
+    stopWaitProgress();
+    setProgress(88);
     updateStatus("Processing response...", "Parsing translations");
 
     // Clean up response - remove markdown code blocks and extract JSON
@@ -1058,10 +1088,12 @@ Translate to these language codes: ${targetLangs.join(", ")}${customInstructions
       );
     }
 
+    setProgress(92);
     updateStatus("Applying translations...", "Updating screenshots");
 
     // Apply translations
     let appliedCount = 0;
+    const totalApplications = textsToTranslate.length * targetLangs.length;
     textsToTranslate.forEach((item, index) => {
       const itemTranslations =
         translations[index] || translations[String(index)];
@@ -1069,6 +1101,13 @@ Translate to these language codes: ${targetLangs.join(", ")}${customInstructions
 
       const screenshot = state.screenshots[item.screenshotIndex];
       const text = screenshot.text || state.text;
+      const screenName =
+        screenshot.name || `Screen ${item.screenshotIndex + 1}`;
+
+      updateStatus(
+        "Applying translations...",
+        `${item.type === "headline" ? "Headline" : "Subheadline"} · ${screenName} (${index + 1}/${textsToTranslate.length})`,
+      );
 
       targetLangs.forEach((lang) => {
         if (itemTranslations[lang]) {
@@ -1082,9 +1121,14 @@ Translate to these language codes: ${targetLangs.join(", ")}${customInstructions
             text.subheadlineEnabled = true;
           }
           appliedCount++;
+          setProgress(
+            92 +
+              Math.min(7, (appliedCount / Math.max(1, totalApplications)) * 7),
+          );
         }
       });
     });
+    setProgress(100);
 
     // Update UI
     syncUIWithState();
@@ -1100,6 +1144,7 @@ Translate to these language codes: ${targetLangs.join(", ")}${customInstructions
     );
   } catch (error) {
     console.error("Translation error:", error);
+    stopWaitProgress();
     progressOverlay.remove();
 
     if (error.message === "Failed to fetch") {
