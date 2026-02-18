@@ -847,6 +847,10 @@ function hideExportProgress() {
 async function exportAllForLanguage(lang) {
   const originalIndex = state.selectedIndex;
   const originalLang = state.currentLanguage;
+  const originalCategory = state.activeCategory;
+  const originalOutputDevice = state.outputDevice;
+  const originalCustomWidth = state.customWidth;
+  const originalCustomHeight = state.customHeight;
   const zip = new JSZip();
   const total = state.screenshots.length;
 
@@ -867,7 +871,18 @@ async function exportAllForLanguage(lang) {
     s.text.currentSubheadlineLang = lang;
   });
 
+  // Per-category counters for Fastlane-compatible numbering
+  const catCounters = { phone: 0, tablet: 0 };
+
   for (let i = 0; i < state.screenshots.length; i++) {
+    // Switch output device to match this screenshot's category
+    const cat = getCategoryOf(state.screenshots[i]);
+    const catSettings = state.categorySettings[cat];
+    state.activeCategory = cat;
+    state.outputDevice = catSettings.outputDevice;
+    state.customWidth = catSettings.customWidth;
+    state.customHeight = catSettings.customHeight;
+
     state.selectedIndex = i;
     updateCanvas();
 
@@ -885,13 +900,20 @@ async function exportAllForLanguage(lang) {
     const dataUrl = canvas.toDataURL("image/png");
     const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
 
+    catCounters[cat]++;
     const devicePrefix = getFastlaneDevicePrefix();
-    zip.file(`${devicePrefix}_${i + 1}.png`, base64Data, { base64: true });
+    zip.file(`${devicePrefix}_${catCounters[cat]}.png`, base64Data, {
+      base64: true,
+    });
   }
 
   // Restore original settings
   state.selectedIndex = originalIndex;
   state.currentLanguage = originalLang;
+  state.activeCategory = originalCategory;
+  state.outputDevice = originalOutputDevice;
+  state.customWidth = originalCustomWidth;
+  state.customHeight = originalCustomHeight;
   state.screenshots.forEach((s, i) => {
     s.text.currentHeadlineLang = originalTextLangs[i].headline;
     s.text.currentSubheadlineLang = originalTextLangs[i].subheadline;
@@ -908,7 +930,7 @@ async function exportAllForLanguage(lang) {
 
   const locale = getFastlaneLocale(lang);
   const link = document.createElement("a");
-  link.download = `screenshots_${locale}_${getFastlaneDevicePrefix()}.zip`;
+  link.download = `screenshots_${locale}.zip`;
   link.href = URL.createObjectURL(content);
   link.click();
   URL.revokeObjectURL(link.href);
@@ -918,6 +940,10 @@ async function exportAllForLanguage(lang) {
 async function exportAllLanguages() {
   const originalIndex = state.selectedIndex;
   const originalLang = state.currentLanguage;
+  const originalCategory = state.activeCategory;
+  const originalOutputDevice = state.outputDevice;
+  const originalCustomWidth = state.customWidth;
+  const originalCustomHeight = state.customHeight;
   const zip = new JSZip();
 
   const totalLangs = state.projectLanguages.length;
@@ -945,7 +971,18 @@ async function exportAllLanguages() {
       s.text.currentSubheadlineLang = lang;
     });
 
+    // Per-category counters for Fastlane-compatible numbering (reset per language)
+    const catCounters = { phone: 0, tablet: 0 };
+
     for (let i = 0; i < state.screenshots.length; i++) {
+      // Switch output device to match this screenshot's category
+      const cat = getCategoryOf(state.screenshots[i]);
+      const catSettings = state.categorySettings[cat];
+      state.activeCategory = cat;
+      state.outputDevice = catSettings.outputDevice;
+      state.customWidth = catSettings.customWidth;
+      state.customHeight = catSettings.customHeight;
+
       state.selectedIndex = i;
       updateCanvas();
 
@@ -964,17 +1001,26 @@ async function exportAllLanguages() {
       const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
 
       // Use Fastlane locale folder + device prefix for filename
+      catCounters[cat]++;
       const locale = getFastlaneLocale(lang);
       const devicePrefix = getFastlaneDevicePrefix();
-      zip.file(`${locale}/${devicePrefix}_${i + 1}.png`, base64Data, {
-        base64: true,
-      });
+      zip.file(
+        `${locale}/${devicePrefix}_${catCounters[cat]}.png`,
+        base64Data,
+        {
+          base64: true,
+        },
+      );
     }
   }
 
   // Restore original settings
   state.selectedIndex = originalIndex;
   state.currentLanguage = originalLang;
+  state.activeCategory = originalCategory;
+  state.outputDevice = originalOutputDevice;
+  state.customWidth = originalCustomWidth;
+  state.customHeight = originalCustomHeight;
   state.screenshots.forEach((s, i) => {
     s.text.currentHeadlineLang = originalTextLangs[i].headline;
     s.text.currentSubheadlineLang = originalTextLangs[i].subheadline;
@@ -990,7 +1036,7 @@ async function exportAllLanguages() {
   hideExportProgress();
 
   const link = document.createElement("a");
-  link.download = `screenshots_${state.outputDevice}_all-languages.zip`;
+  link.download = `screenshots_all-languages.zip`;
   link.href = URL.createObjectURL(content);
   link.click();
   URL.revokeObjectURL(link.href);
