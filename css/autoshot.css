@@ -1,0 +1,272 @@
+/* ===== Autoshot import modal, device category tabs, mapping rows ===== */
+/* auto-split from styles.css lines 3591–3860 */
+/* ===== Autoshot Import Button ===== */
+.add-autoshot-btn {
+  color: var(--accent);
+  border-color: rgba(10, 132, 255, 0.35);
+}
+
+.add-autoshot-btn:hover {
+  border-color: var(--accent);
+  background: rgba(10, 132, 255, 0.08);
+}
+
+/* ===== Autoshot Import Modal ===== */
+.autoshot-import-modal {
+  max-width: 460px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.autoshot-section {
+  margin: 18px 0 0;
+}
+
+.autoshot-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+/* Device type selector */
+.autoshot-device-select {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0 0;
+  flex-wrap: wrap;
+}
+
+.autoshot-device-options {
+  display: flex;
+  gap: 6px;
+}
+
+/* New checkbox-style labels */
+.autoshot-device-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.autoshot-device-check:has(input:checked) {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.autoshot-device-check:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.autoshot-device-check:has(input:checked):hover {
+  color: #fff;
+}
+
+.autoshot-device-check input[type="checkbox"] {
+  display: none;
+}
+
+/* Keep legacy button styles for back-compat */
+.autoshot-device-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.autoshot-device-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.autoshot-device-btn:not(.active):hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.autoshot-device-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.autoshot-device-btn:disabled:hover {
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+/* New/override mapping row variants */
+.autoshot-mapping-new .autoshot-slot-label {
+  color: var(--accent);
+}
+
+.autoshot-mapping-override .autoshot-slot-label {
+  color: var(--text-secondary);
+}
+
+.autoshot-mapping-category-header {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 6px 0 2px;
+}
+
+/* === Device Category Tabs (Phone / Tablet) === */
+.device-category-tabs {
+  display: flex;
+  gap: 4px;
+  margin: 8px 0 10px;
+}
+
+.device-category-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.device-category-tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.device-category-tab:not(.active):hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.cat-badge {
+  display: none;
+  background: rgba(255, 255, 255, 0.25);
+  color: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 0 5px;
+  min-width: 16px;
+  text-align: center;
+  line-height: 16px;
+}
+
+.device-category-tab.active .cat-badge,
+.device-category-tab:not(.active) .cat-badge {
+  display: inline-block;
+}
+
+.device-category-tab:not(.active) .cat-badge {
+  background: var(--bg-secondary);
+  color: var(--text-tertiary);
+}
+
+/* Mapping list */
+.autoshot-mapping-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+.autoshot-mapping-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 4px;
+  font-size: 13px;
+  border-radius: 6px;
+}
+
+.autoshot-mapping-row.autoshot-mapping-missing {
+  opacity: 0.5;
+}
+
+.autoshot-screen-name {
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  min-width: 0;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.autoshot-mapping-row svg {
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+
+.autoshot-slot-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  flex: 1;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Languages list */
+.autoshot-langs-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.autoshot-lang-tag {
+  padding: 4px 10px;
+  background: var(--bg-tertiary);
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+/* Warning / info banner */
+.autoshot-import-warning {
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: rgba(255, 159, 10, 0.12);
+  border: 1px solid rgba(255, 159, 10, 0.3);
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--text-primary);
+  line-height: 1.5;
+}

@@ -1,0 +1,429 @@
+/* ===== Elements tab, popouts tab, canvas drag cursor, emoji/icon pickers ===== */
+/* auto-split from styles.css lines 3164–3590 */
+/* ===== Elements Tab ===== */
+
+.element-add-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.add-element-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.add-element-btn:hover {
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.elements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.elements-empty {
+  text-align: center;
+  padding: 20px 12px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.elements-empty-hint {
+  font-size: 11px;
+  margin-top: 4px;
+  opacity: 0.6;
+}
+
+.element-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.element-item:hover {
+  border-color: var(--border-color);
+}
+
+.element-item.selected {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.element-item-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.element-item-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.element-item-thumb svg {
+  color: var(--text-secondary);
+}
+
+.element-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.element-item-name {
+  font-size: 12px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.element-item-layer {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.element-item-actions {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.element-item:hover .element-item-actions {
+  opacity: 1;
+}
+
+.element-item-btn {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0;
+}
+
+.element-item-btn:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.element-item-btn.danger:hover {
+  color: #ff453a;
+}
+
+.element-properties {
+  margin-top: 4px;
+}
+
+.element-properties-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+#element-text-properties .text-style-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ===== Popouts Tab ===== */
+.add-popout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: 12px;
+}
+
+.add-popout-btn:hover:not(:disabled) {
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.add-popout-btn:disabled {
+  cursor: not-allowed;
+}
+
+.popouts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.popouts-empty {
+  text-align: center;
+  padding: 20px 12px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.popout-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.popout-item:hover {
+  border-color: var(--border-color);
+}
+
+.popout-item.selected {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.popout-item-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.popout-item-thumb canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.popout-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.popout-item-name {
+  font-size: 12px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.popout-item-crop {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.popout-item-actions {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.popout-item:hover .popout-item-actions {
+  opacity: 1;
+}
+
+.popout-properties {
+  margin-top: 4px;
+}
+
+.popout-crop-preview {
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  cursor: default;
+}
+
+/* Canvas drag cursor for elements */
+.canvas-wrapper.element-hover {
+  cursor: grab;
+}
+
+.canvas-wrapper.element-dragging {
+  cursor: grabbing;
+}
+
+/* ===== Inline Emoji & Icon Pickers ===== */
+
+.inline-picker {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.inline-picker-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.inline-picker-search svg {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.inline-picker-search input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 12px;
+  outline: none;
+}
+
+.inline-picker-search input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.inline-picker-categories {
+  display: flex;
+  gap: 2px;
+  padding: 6px 6px 0;
+  overflow-x: auto;
+  flex-wrap: wrap;
+}
+
+.picker-cat {
+  padding: 3px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.picker-cat:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.picker-cat.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.inline-picker-grid {
+  overflow-y: auto;
+  max-height: 200px;
+  padding: 6px;
+}
+
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 2px;
+}
+
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 2px;
+}
+
+.picker-grid-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.12s;
+}
+
+.picker-grid-item:hover {
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+}
+
+.emoji-grid-item {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.icon-grid-item {
+  padding: 6px;
+}
+
+.icon-grid-item img,
+.icon-grid-item svg {
+  width: 20px;
+  height: 20px;
+}
+
+.icon-grid-item .icon-placeholder {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  background: var(--bg-tertiary);
+}
+
+/* Emoji thumbnail in elements list */
+.element-item-thumb .emoji-thumb {
+  font-size: 18px;
+  line-height: 1;
+}
+

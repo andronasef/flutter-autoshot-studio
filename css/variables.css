@@ -1,0 +1,110 @@
+/* ===== CSS custom properties & base reset ===== */
+/* auto-split from styles.css lines 1–108 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #0a0a0b;
+  --bg-secondary: #141416;
+  --bg-tertiary: #1c1c1f;
+  --border-color: #2a2a2e;
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1a6;
+  --accent: #0a84ff;
+  --accent-hover: #409cff;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --shadow-heavy: rgba(0, 0, 0, 0.5);
+  --overlay-bg: rgba(0, 0, 0, 0.7);
+  --accent-subtle: rgba(10, 132, 255, 0.1);
+  --accent-subtle-strong: rgba(10, 132, 255, 0.15);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg-primary: #f5f5f7;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #e8e8ed;
+    --border-color: #d2d2d7;
+    --text-primary: #1d1d1f;
+    --text-secondary: #6e6e73;
+    --accent: #007aff;
+    --accent-hover: #0056b3;
+    --shadow-color: rgba(0, 0, 0, 0.08);
+    --shadow-heavy: rgba(0, 0, 0, 0.15);
+    --overlay-bg: rgba(0, 0, 0, 0.4);
+    --accent-subtle: rgba(0, 122, 255, 0.06);
+    --accent-subtle-strong: rgba(0, 122, 255, 0.1);
+  }
+  .tip-box img {
+    filter: none;
+  }
+  .settings-btn img {
+    filter: invert(0.4);
+  }
+  .settings-btn:hover img {
+    filter: invert(0);
+  }
+}
+
+/* Manual theme overrides */
+html[data-theme="light"] {
+  --bg-primary: #f5f5f7;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #e8e8ed;
+  --border-color: #d2d2d7;
+  --text-primary: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --accent: #007aff;
+  --accent-hover: #0056b3;
+  --shadow-color: rgba(0, 0, 0, 0.08);
+  --shadow-heavy: rgba(0, 0, 0, 0.15);
+  --overlay-bg: rgba(0, 0, 0, 0.4);
+  --accent-subtle: rgba(0, 122, 255, 0.06);
+  --accent-subtle-strong: rgba(0, 122, 255, 0.1);
+}
+
+html[data-theme="light"] .tip-box img {
+  filter: none;
+}
+html[data-theme="light"] .settings-btn img {
+  filter: invert(0.4);
+}
+html[data-theme="light"] .settings-btn:hover img {
+  filter: invert(0);
+}
+
+html[data-theme="dark"] {
+  --bg-primary: #0a0a0b;
+  --bg-secondary: #141416;
+  --bg-tertiary: #1c1c1f;
+  --border-color: #2a2a2e;
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1a6;
+  --accent: #0a84ff;
+  --accent-hover: #409cff;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --shadow-heavy: rgba(0, 0, 0, 0.5);
+  --overlay-bg: rgba(0, 0, 0, 0.7);
+  --accent-subtle: rgba(10, 132, 255, 0.1);
+  --accent-subtle-strong: rgba(10, 132, 255, 0.15);
+}
+
+html,
+body {
+  /* Prevent browser back/forward gesture from horizontal swipe */
+  overscroll-behavior-x: none;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto,
+    sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow: hidden;
+}
+

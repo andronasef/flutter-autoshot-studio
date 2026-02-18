@@ -1,0 +1,544 @@
+/* ===== Language picker, languages modal, flags, translations modal, export-language modal, progress modal, duplicate modal ===== */
+/* auto-split from styles.css lines 2622–3163 */
+/* Language picker */
+.language-picker {
+  position: relative;
+}
+
+.language-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: var(--bg-tertiary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.language-btn:hover {
+  background: var(--bg-primary);
+}
+
+.language-btn-flag {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.language-menu {
+  position: fixed;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 4px;
+  min-width: 180px;
+  box-shadow: 0 10px 40px var(--shadow-color);
+  z-index: 1000;
+  display: none;
+}
+
+.language-menu.visible {
+  display: block;
+}
+
+.language-menu-items {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.language-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 14px;
+  text-align: left;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.language-menu-item:hover {
+  background: var(--bg-tertiary);
+}
+
+.language-menu-item.active {
+  background: var(--accent-subtle-strong);
+  color: var(--accent);
+}
+
+.language-menu-item .flag {
+  font-size: 16px;
+}
+
+.language-menu-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 4px 0;
+}
+
+.language-menu-edit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 13px;
+  text-align: left;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.language-menu-edit:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.language-menu-edit svg {
+  opacity: 0.7;
+}
+
+/* Textarea with button inside */
+.textarea-with-button {
+  position: relative;
+}
+
+.textarea-with-button textarea {
+  padding-right: 36px;
+}
+
+.textarea-with-button .magic-translate-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+}
+
+.magic-translate-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  opacity: 0.8;
+}
+
+.magic-translate-btn:hover {
+  opacity: 1;
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+}
+
+.per-screenshot-active {
+  background: var(--accent-subtle);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 12px;
+  margin: -12px;
+  margin-bottom: 0;
+}
+
+/* Languages Modal */
+.languages-modal {
+  width: 400px;
+  max-width: 90vw;
+}
+
+.languages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.language-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.language-item .flag {
+  font-size: 20px;
+}
+
+.language-item .name {
+  flex: 1;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.language-item .current-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: var(--accent-subtle-strong);
+  color: var(--accent);
+  border-radius: 4px;
+}
+
+.language-item .remove-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.language-item .remove-btn:hover {
+  background: rgba(255, 69, 58, 0.15);
+  color: #ff453a;
+}
+
+.language-item .remove-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.language-item .remove-btn:disabled:hover {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.add-language-section {
+  margin-bottom: 16px;
+}
+
+/* Screenshot language flags indicator */
+.screenshot-lang-flags {
+  margin-left: 6px;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.screenshot-complete {
+  color: #30d158;
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+/* Screenshot Translations Modal */
+.translations-modal {
+  width: 450px;
+  max-width: 90vw;
+}
+
+.translations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 0;
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.translation-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.translation-item.has-image {
+  border-color: rgba(48, 209, 88, 0.3);
+  background: rgba(48, 209, 88, 0.05);
+}
+
+.translation-thumb {
+  width: 40px;
+  height: 86px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.translation-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.translation-thumb.empty {
+  border: 2px dashed var(--border-color);
+  color: var(--text-secondary);
+}
+
+.translation-info {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.translation-info .flag {
+  font-size: 18px;
+}
+
+.translation-info .name {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.translation-upload {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: none;
+  background: var(--accent);
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.translation-upload:hover {
+  background: #0a84ff;
+}
+
+.translation-remove {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.translation-remove:hover {
+  background: rgba(255, 69, 58, 0.15);
+  color: #ff453a;
+}
+
+/* Export Language Modal */
+.export-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.export-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  width: 100%;
+}
+
+.export-option:hover {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.export-option-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.export-option-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Export Progress Modal */
+.export-progress-modal {
+  text-align: center;
+}
+
+.export-progress-modal h2 {
+  margin-bottom: 8px;
+}
+
+.export-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 20px 0 12px;
+}
+
+.export-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 4px;
+  width: 0%;
+  transition: width 0.2s ease-out;
+}
+
+#export-progress-status {
+  color: var(--text-primary);
+  font-size: 14px;
+  margin: 0;
+}
+
+#export-progress-detail {
+  color: var(--text-secondary);
+  font-size: 13px;
+  margin: 0;
+}
+
+/* Duplicate Screenshot Modal */
+.duplicate-screenshot-modal {
+  max-width: 420px;
+}
+
+.duplicate-comparison {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 24px 0;
+  padding: 16px;
+  background: var(--bg-tertiary);
+  border-radius: 12px;
+}
+
+.duplicate-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.duplicate-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+}
+
+.duplicate-thumb {
+  width: 80px;
+  height: 140px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.duplicate-thumb img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.duplicate-name {
+  font-size: 11px;
+  color: var(--text-secondary);
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.duplicate-arrow {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.duplicate-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.duplicate-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.duplicate-option:hover {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.duplicate-option svg {
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+
+.duplicate-option:hover svg {
+  color: var(--accent);
+}
+
+.duplicate-option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.duplicate-option-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.duplicate-option-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+

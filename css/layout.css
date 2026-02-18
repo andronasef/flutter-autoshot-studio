@@ -1,0 +1,426 @@
+/* ===== App layout, sidebar, screenshot list, drag & drop ===== */
+/* auto-split from styles.css lines 152–575 */
+/* Sidebar styles */
+.sidebar {
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  max-height: 100vh;
+}
+
+.sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  padding-bottom: 0;
+}
+
+.sidebar-add-buttons {
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.add-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.add-btn:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.sidebar-footer {
+  flex-shrink: 0;
+  padding: 16px 20px 20px;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+}
+
+.sidebar-right {
+  border-right: none;
+  border-left: 1px solid var(--border-color);
+  transition: opacity 0.3s ease;
+}
+
+.sidebar-right.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.sidebar-right .sidebar-header {
+  flex-shrink: 0;
+}
+
+.sidebar-right .sidebar-header .tabs {
+  display: flex;
+  width: 100%;
+  border-radius: 0;
+  padding: 0;
+  gap: 0;
+  background: transparent;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-right .sidebar-header .tab {
+  flex: 1 1 0;
+  width: 0;
+  border-radius: 0;
+  padding: 12px 8px;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.sidebar-right .sidebar-header .tab.active {
+  background: transparent;
+  border-bottom-color: var(--accent);
+}
+
+.sidebar-right .sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.sidebar h2 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+}
+
+.sidebar h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+/* Upload item (in screenshot list) */
+.upload-item {
+  border: 2px dashed var(--border-color);
+  cursor: pointer;
+}
+
+.upload-item:hover {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.upload-item.dragover {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.upload-item-icon {
+  width: 24px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.upload-item-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.upload-item:hover .upload-item-icon {
+  opacity: 0.8;
+  color: var(--accent);
+}
+
+/* Screenshot list */
+.screenshot-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-content.drop-active {
+  border: 2px dashed var(--accent);
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: 8px;
+}
+
+.screenshot-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+
+.screenshot-item:hover {
+  background: var(--bg-primary);
+}
+
+.screenshot-item.selected {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.screenshot-thumb {
+  width: 24px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 3px;
+  background: var(--bg-primary);
+}
+
+.blank-thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  border: 1px dashed var(--border-color);
+}
+
+.screenshot-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.screenshot-name {
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: default;
+}
+
+.screenshot-name-input {
+  width: 100%;
+  background: var(--bg-primary);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 1px 4px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.screenshot-device {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* Screenshot item menu */
+.screenshot-menu-wrapper {
+  position: relative;
+}
+
+.screenshot-menu-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.screenshot-menu-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.screenshot-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 4px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px;
+  min-width: 200px;
+  z-index: 100;
+  box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.screenshot-menu.open {
+  display: block;
+}
+
+.screenshot-menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.screenshot-menu-item:hover {
+  background: var(--bg-hover);
+}
+
+.screenshot-menu-item.danger:hover {
+  background: #ff453a20;
+  color: #ff453a;
+}
+
+.screenshot-menu-item svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+/* Transfer mode styles */
+.transfer-hint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--accent-subtle-strong);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--accent);
+}
+
+.transfer-cancel {
+  padding: 4px 10px;
+  border: none;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  transition: background 0.2s;
+}
+
+.transfer-cancel:hover {
+  background: var(--bg-secondary);
+}
+
+.screenshot-item.transfer-target {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.screenshot-item.transfer-source-option {
+  cursor: pointer;
+  border-color: transparent;
+}
+
+.screenshot-item.transfer-source-option:hover {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+/* Drag handle */
+.drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  color: var(--text-secondary);
+  opacity: 0.4;
+  cursor: grab;
+  flex-shrink: 0;
+}
+
+.drag-handle:hover {
+  opacity: 0.8;
+}
+
+.screenshot-item:active .drag-handle {
+  cursor: grabbing;
+}
+
+/* Drag and drop states */
+.screenshot-item.dragging {
+  opacity: 0.5;
+  background: var(--bg-primary);
+}
+
+.screenshot-item.drag-insert-after::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+}
+
+.screenshot-item.drag-insert-before::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+}
+
+/* Set as Default button */
+.set-default-btn {
+  width: 100%;
+  padding: 8px 12px;
+  margin-top: 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.set-default-btn:hover {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border-color: var(--accent);
+}
+
+.set-default-btn:active {
+  transform: scale(0.98);
+}
+
