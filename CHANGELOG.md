@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.4.1] — 2026-02-18
+
+### Fixed
+
+- **Arabic / RTL font picker broken** — `fontPickerState` was missing `"arabic"` and `"sub-arabic"` entries; calling `renderFontList` for either picker caused an immediate `TypeError` (reading `.category` on `undefined`), so the dropdown never populated and font selection was completely non-functional
+- **Arabic font not applied on first canvas render** — `loadGoogleFont` was not awaited before the first `drawText` call; canvas now re-renders automatically once the Arabic font has finished loading (prevents falling back to the system sans-serif on initial display)
+
+---
+
 ## [1.4.0] — 2026-02-20
 
 ### Added

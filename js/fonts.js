@@ -1452,6 +1452,8 @@ async function fetchAllGoogleFonts() {
 const fontPickerState = {
   headline: { category: "popular", search: "" },
   subheadline: { category: "popular", search: "" },
+  arabic: { category: "popular", search: "" },
+  "sub-arabic": { category: "popular", search: "" },
   element: { category: "popular", search: "" },
 };
 
@@ -1853,6 +1855,16 @@ function updateSingleFontPickerPreview(hiddenId, previewId, stateKey) {
 
   preview.textContent = fontName;
   preview.style.fontFamily = fontValue;
+
+  // If this is a Google font being loaded async, re-render the canvas once
+  // it finishes so RTL text uses the correct font on first display
+  if (!systemFont && fontValue.includes("'")) {
+    loadGoogleFont(fontName).then(() => {
+      if (!state.isExporting && typeof updateCanvas === "function") {
+        updateCanvas();
+      }
+    });
+  }
 }
 
 function updateElementFontPickerPreview(el) {
