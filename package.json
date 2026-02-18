@@ -1,0 +1,25 @@
+{
+  "name": "autoshot-studio",
+  "version": "1.2.0",
+  "description": "Autoshot Studio - Create beautiful App Store and Play Store marketing screenshots",
+  "author": {
+    "name": "YUZUHub",
+    "email": "hello@yuzuhub.com",
+    "url": "https://yuzuhub.com"
+  },
+  "license": "MIT",
+  "homepage": "https://yuzu-hub.github.io/appscreen/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YUZU-Hub/appscreen"
+  },
+  "scripts": {
+    "serve": "python -m http.server 8000",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2"
+  }
+}
