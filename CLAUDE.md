@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-App Store Screenshot Generator - a browser-based tool for creating App Store marketing screenshots. Built with vanilla JavaScript, HTML5 Canvas, Three.js, and CSS. No build process required.
+**Autoshot Studio** - a powerful, AI-driven screenshot generation studio for app marketers. Built with vanilla JavaScript, HTML5 Canvas, Three.js, and CSS. Available as a web app and a native desktop app via Tauri.
 
 ## Agent Instructions
 
@@ -13,6 +13,10 @@ App Store Screenshot Generator - a browser-based tool for creating App Store mar
 - The agent should run the server in the background and inform the user which URL to open (e.g., `http://localhost:8000`)
 - The agent should NOT ask the user to start the server manually
 - The agent should monitor server logs to detect and report any errors or problems to the user
+
+**Tauri Development:**
+- For desktop-specific changes, use `npm run tauri:dev` to start the Tauri development environment
+- Monitor Rust (src-tauri) and JavaScript console for errors
 
 **Git & Commits:**
 - The agent should handle all git operations automatically (add, commit, push)
@@ -30,7 +34,30 @@ python3 -m http.server 8000
 npx serve .
 ```
 
-Open `http://localhost:8000` in browser. Opening `index.html` directly from filesystem will break persistence.
+To run as a desktop app:
+```bash
+npm run tauri:dev
+```
+
+## Architecture
+
+**Main files:**
+
+- `index.html` - UI structure with support for Phone/Tablet tabs, Elements, Popouts, and AI tools
+- `styles.css` - Dark theme styling, responsive layout, and Tauri-specific titlebar styles
+- `app.js` - Core application logic, state management, and canvas rendering (~5500 lines)
+- `three-renderer.js` - Three.js 3D rendering for iPhone and Samsung mockups
+- `magical-titles.js` - AI-powered title generation using Vision APIs (Claude/GPT/Gemini)
+- `llm.js` - LLM provider configurations and translation logic
+- `language-utils.js` - Multi-language support and automated screenshot detection
+
+**Key Features:**
+- **Phone / Tablet Tabs**: Separate workspaces for different device categories
+- **Elements & Popouts**: Custom graphics, text, icons, and magnifying crops
+- **AI Magical Titles**: Analyze screens to generate marketing copy automatically
+- **autoshot Import**: Direct integration with Flutter's autoshot package
+- **Multi-Language**: Automated localization and per-language layouts
+
 
 ## Architecture
 

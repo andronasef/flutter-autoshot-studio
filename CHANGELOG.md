@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [1.2.0] — 2026-02-18
 
 ### Added
+
 - **Import phone + tablet in one shot** — the autoshot import dialog now shows checkboxes instead of radio buttons; both types are selected by default when the ZIP contains both, so phone and tablet slots are created and filled in a single import operation
 - **Per-category output size** — Phone and Tablet tabs remember their own output device selection independently (e.g. Phone → iPhone 6.9", Tablet → iPad 12.9"); switching tabs restores each category's last-used size automatically
 - **Screen rename** — double-click any screen name in the sidebar to edit it inline, or use the ⋮ menu → Rename; confirm with Enter, cancel with Escape
@@ -16,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Smart re-import** — each slot is tagged with its autoshot screen name so re-importing the same ZIP (e.g. after updating screenshots) overwrites the correct slot regardless of order
 
 ### Changed
+
 - Import progress label now shows the device type alongside the screen index (`phone · Screen 2/5 · en`)
 - Autoshot mapping list now shows `↺ Override slot N` vs `✦ New slot` labels so it is clear what will be created vs updated
 - Category settings (output device, custom dimensions) are saved to IndexedDB and restored on project load
@@ -25,6 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [1.1.0] — 2026-02-18
 
 ### Added
+
 - **Phone / Tablet separate spaces** — the screenshot list now has Phone and Tablet tabs; each screenshot belongs to one category, and navigation (swipe, keyboard, side previews) stays within the active category
 - Autoshot ZIP import now routes phone screenshots to phone slots and tablet screenshots to tablet slots automatically; the app switches to the matching tab after import
 - **Tablet support for autoshot import** — ZIP files containing tablet screenshots are now fully supported
@@ -34,6 +37,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Helpful tip after importing tablet screenshots suggesting to switch output size to iPad 12.9" or iPad 11" when the current output is a phone size
 
 ### Changed
+
 - Project renamed from **App Store Screenshot Generator** to **Autoshot Studio**
 - Version bumped to `1.1.0` in `package.json` and `tauri.conf.json`
 - Updated meta description and Open Graph tags to reflect the new name and tablet support
@@ -44,6 +48,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [1.0.0] — 2025 (Initial Public Release)
 
 ### Added
+
 - **Output Sizes**: iPhone 6.9", 6.7", 6.5", 5.5" · iPad 12.9", 11" · Android phone & tablet · Web banners (Open Graph, Twitter Card, Hero, Feature Graphic) · Custom dimensions
 - **Backgrounds**: Multi-stop gradient editor with presets, solid color, image background with blur/overlay, noise texture overlay
 - **2D Device Mode**: Scale, position (X/Y), rotation, corner radius, drop shadow, border
