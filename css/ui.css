@@ -641,7 +641,8 @@
 /* Project controls */
 .project-controls {
   display: flex;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 6px;
   align-items: stretch;
 }
 
@@ -657,7 +658,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 8px 12px;
+  padding: 6px 10px;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
   border-radius: 8px;
@@ -770,7 +771,7 @@
 }
 
 .project-btn {
-  padding: 8px;
+  padding: 6px;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
   border-radius: 6px;

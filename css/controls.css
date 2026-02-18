@@ -1,5 +1,37 @@
 /* ===== UI controls, buttons, text-style bar, gradient editor ===== */
 /* auto-split from styles.css lines 576–878 */
+
+/* Arabic / RTL font inline row */
+.arabic-font-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.arabic-font-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 90px;
+}
+
+.arabic-font-row .font-picker {
+  flex: 1;
+  min-width: 0;
+}
+
+.arabic-font-row .font-picker-trigger {
+  height: 28px;
+  padding: 0 8px;
+  font-size: 11px;
+}
+
+.arabic-font-row .font-picker-preview {
+  font-size: 11px;
+}
+
 /* Controls */
 .control-group {
   margin-bottom: 20px;
@@ -302,4 +334,3 @@ input[type="range"]::-webkit-slider-thumb {
   color: var(--accent);
   background: rgba(99, 102, 241, 0.1);
 }
-

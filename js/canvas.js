@@ -1,6 +1,63 @@
 /* ===== Canvas drawing, popout/element rendering, export ===== */
 /* auto-split from app.js lines 9826–10741 */
-// Draw elements for the current screenshot at a specific layer
+
+// Fastlane-compatible locale codes (BCP 47)
+const fastlaneLocaleMap = {
+  en: "en-US",
+  "en-gb": "en-GB",
+  de: "de-DE",
+  fr: "fr-FR",
+  es: "es-ES",
+  it: "it-IT",
+  pt: "pt-PT",
+  "pt-br": "pt-BR",
+  nl: "nl-NL",
+  ru: "ru-RU",
+  ja: "ja-JP",
+  ko: "ko-KR",
+  zh: "zh-Hans",
+  "zh-tw": "zh-Hant",
+  ar: "ar-SA",
+  hi: "hi-IN",
+  tr: "tr-TR",
+  pl: "pl-PL",
+  sv: "sv-SE",
+  da: "da-DK",
+  no: "nb-NO",
+  fi: "fi-FI",
+  th: "th-TH",
+  vi: "vi-VN",
+  id: "id-ID",
+  uk: "uk-UA",
+};
+
+// Fastlane device-size prefixes
+const fastlaneDevicePrefix = {
+  "iphone-6.9": "iPhone69",
+  "iphone-6.7": "iPhone67",
+  "iphone-6.5": "iPhone65",
+  "iphone-5.5": "iPhone55",
+  "ipad-12.9": "ipad129",
+  "ipad-11": "ipad11",
+  "android-phone": "phoneFullPhone",
+  "android-phone-hd": "phoneFullPhone",
+  "android-tablet-7": "sevenInch",
+  "android-tablet-10": "tenInch",
+  "web-og": "webOg",
+  "web-twitter": "webTwitter",
+  "web-hero": "webHero",
+  "web-feature": "webFeature",
+  custom: "custom",
+};
+
+function getFastlaneLocale(lang) {
+  return fastlaneLocaleMap[lang] || lang.toUpperCase();
+}
+
+function getFastlaneDevicePrefix() {
+  return fastlaneDevicePrefix[state.outputDevice] || state.outputDevice;
+}
+
 function drawElements(context, dims, layer) {
   const elements = getElements();
   drawElementsToContext(context, dims, elements, layer);
@@ -538,7 +595,11 @@ function drawText() {
     ctx.direction =
       isRtlLanguage(headlineLang) || hasRtlChars(headline) ? "rtl" : "ltr";
     const fontStyle = text.headlineItalic ? "italic" : "normal";
-    ctx.font = `${fontStyle} ${text.headlineWeight} ${headlineLayout.headlineSize}px ${text.headlineFont}`;
+    const effectiveHeadlineFont =
+      isRtlLanguage(headlineLang) && text.headlineArabicFont
+        ? text.headlineArabicFont
+        : text.headlineFont;
+    ctx.font = `${fontStyle} ${text.headlineWeight} ${headlineLayout.headlineSize}px ${effectiveHeadlineFont}`;
     ctx.fillStyle = text.headlineColor;
 
     const lines = wrapText(ctx, headline, dims.width - padding * 2);
@@ -602,7 +663,11 @@ function drawText() {
         : "ltr";
     const subFontStyle = text.subheadlineItalic ? "italic" : "normal";
     const subWeight = text.subheadlineWeight || "400";
-    ctx.font = `${subFontStyle} ${subWeight} ${subheadlineLayout.subheadlineSize}px ${text.subheadlineFont || text.headlineFont}`;
+    const effectiveSubFont =
+      isRtlLanguage(subheadlineLang) && text.subheadlineArabicFont
+        ? text.subheadlineArabicFont
+        : text.subheadlineFont || text.headlineFont;
+    ctx.font = `${subFontStyle} ${subWeight} ${subheadlineLayout.subheadlineSize}px ${effectiveSubFont}`;
     ctx.fillStyle = hexToRgba(
       text.subheadlineColor,
       text.subheadlineOpacity / 100,
@@ -727,8 +792,10 @@ async function exportCurrent() {
   // Ensure canvas is up-to-date (especially important for 3D mode)
   updateCanvas();
 
+  const devicePrefix = getFastlaneDevicePrefix();
+  const locale = getFastlaneLocale(state.currentLanguage);
   const link = document.createElement("a");
-  link.download = `screenshot-${state.selectedIndex + 1}.png`;
+  link.download = `${locale}_${devicePrefix}_${state.selectedIndex + 1}.png`;
   link.href = canvas.toDataURL("image/png");
   link.click();
 }
@@ -818,7 +885,8 @@ async function exportAllForLanguage(lang) {
     const dataUrl = canvas.toDataURL("image/png");
     const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
 
-    zip.file(`screenshot-${i + 1}.png`, base64Data, { base64: true });
+    const devicePrefix = getFastlaneDevicePrefix();
+    zip.file(`${devicePrefix}_${i + 1}.png`, base64Data, { base64: true });
   }
 
   // Restore original settings
@@ -838,8 +906,9 @@ async function exportAllForLanguage(lang) {
   await new Promise((resolve) => setTimeout(resolve, 1500));
   hideExportProgress();
 
+  const locale = getFastlaneLocale(lang);
   const link = document.createElement("a");
-  link.download = `screenshots_${state.outputDevice}_${lang}.zip`;
+  link.download = `screenshots_${locale}_${getFastlaneDevicePrefix()}.zip`;
   link.href = URL.createObjectURL(content);
   link.click();
   URL.revokeObjectURL(link.href);
@@ -894,8 +963,12 @@ async function exportAllLanguages() {
       const dataUrl = canvas.toDataURL("image/png");
       const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
 
-      // Use language code as folder name
-      zip.file(`${lang}/screenshot-${i + 1}.png`, base64Data, { base64: true });
+      // Use Fastlane locale folder + device prefix for filename
+      const locale = getFastlaneLocale(lang);
+      const devicePrefix = getFastlaneDevicePrefix();
+      zip.file(`${locale}/${devicePrefix}_${i + 1}.png`, base64Data, {
+        base64: true,
+      });
     }
   }
 

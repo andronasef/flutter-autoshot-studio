@@ -1482,6 +1482,28 @@ function initFontPicker() {
     stateKey: "subheadlineFont",
   });
 
+  initSingleFontPicker("arabic", {
+    picker: "arabic-font-picker",
+    trigger: "arabic-font-picker-trigger",
+    dropdown: "arabic-font-picker-dropdown",
+    search: "arabic-font-search",
+    list: "arabic-font-picker-list",
+    preview: "arabic-font-picker-preview",
+    hidden: "arabic-font",
+    stateKey: "headlineArabicFont",
+  });
+
+  initSingleFontPicker("sub-arabic", {
+    picker: "sub-arabic-font-picker",
+    trigger: "sub-arabic-font-picker-trigger",
+    dropdown: "sub-arabic-font-picker-dropdown",
+    search: "sub-arabic-font-search",
+    list: "sub-arabic-font-picker-list",
+    preview: "sub-arabic-font-picker-preview",
+    hidden: "sub-arabic-font",
+    stateKey: "subheadlineArabicFont",
+  });
+
   initSingleFontPicker("element", {
     picker: "element-font-picker",
     trigger: "element-font-picker-trigger",
@@ -1790,6 +1812,16 @@ function updateFontPickerPreview() {
     "subheadline-font",
     "subheadline-font-picker-preview",
     "subheadlineFont",
+  );
+  updateSingleFontPickerPreview(
+    "arabic-font",
+    "arabic-font-picker-preview",
+    "headlineArabicFont",
+  );
+  updateSingleFontPickerPreview(
+    "sub-arabic-font",
+    "sub-arabic-font-picker-preview",
+    "subheadlineArabicFont",
   );
 }
 

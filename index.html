@@ -408,13 +408,13 @@
 
         <div class="sidebar-add-buttons">
           <button
-            class="add-btn"
+            class="add-btn add-btn-primary"
             id="add-screenshots-btn"
             title="Drop or click to browse"
           >
             <svg
-              width="16"
-              height="16"
+              width="15"
+              height="15"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -424,42 +424,44 @@
             </svg>
             Add Screenshots
           </button>
-          <button
-            class="add-btn add-blank-btn"
-            id="add-blank-btn"
-            title="Add a screen without an image"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
+          <div class="add-btn-secondary-row">
+            <button
+              class="add-btn add-blank-btn"
+              id="add-blank-btn"
+              title="Add a screen without an image"
             >
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-            </svg>
-            Blank Screen
-          </button>
-          <button
-            class="add-btn add-autoshot-btn"
-            id="add-autoshot-btn"
-            title="Import screenshots from an autoshot Flutter package ZIP"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+              </svg>
+              Blank
+            </button>
+            <button
+              class="add-btn add-autoshot-btn"
+              id="add-autoshot-btn"
+              title="Import screenshots from an autoshot Flutter package ZIP"
             >
-              <path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
-              <polyline points="7 11 12 16 17 11" />
-              <line x1="12" y1="16" x2="12" y2="4" />
-            </svg>
-            Import autoshot
-          </button>
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              >
+                <path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+                <polyline points="7 11 12 16 17 11" />
+                <line x1="12" y1="16" x2="12" y2="4" />
+              </svg>
+              autoshot
+            </button>
+          </div>
           <input type="file" id="autoshot-zip-input" accept=".zip" hidden />
         </div>
 
@@ -1751,6 +1753,81 @@
                   id="headline-font"
                   value="-apple-system, BlinkMacSystemFont, 'SF Pro Display'"
                 />
+                <div class="arabic-font-row">
+                  <label class="arabic-font-label">Arabic / RTL Font</label>
+                  <div class="font-picker" id="arabic-font-picker">
+                    <button
+                      class="font-picker-trigger"
+                      id="arabic-font-picker-trigger"
+                    >
+                      <span
+                        class="font-picker-preview"
+                        id="arabic-font-picker-preview"
+                        >Noto Sans Arabic</span
+                      >
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    </button>
+                    <div
+                      class="font-picker-dropdown"
+                      id="arabic-font-picker-dropdown"
+                    >
+                      <div class="font-picker-search">
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <circle cx="11" cy="11" r="8" />
+                          <path d="M21 21l-4.35-4.35" />
+                        </svg>
+                        <input
+                          type="text"
+                          id="arabic-font-search"
+                          placeholder="Search fonts..."
+                          autocomplete="off"
+                        />
+                      </div>
+                      <div class="font-picker-categories">
+                        <button
+                          class="font-category active"
+                          data-category="popular"
+                        >
+                          Popular
+                        </button>
+                        <button class="font-category" data-category="system">
+                          System
+                        </button>
+                        <button class="font-category" data-category="all">
+                          All
+                        </button>
+                        <button class="font-category" data-category="custom">
+                          Custom
+                        </button>
+                      </div>
+                      <div
+                        class="font-picker-list"
+                        id="arabic-font-picker-list"
+                      ></div>
+                    </div>
+                  </div>
+                  <input
+                    type="hidden"
+                    id="arabic-font"
+                    value="'Noto Sans Arabic', 'Segoe UI', sans-serif"
+                  />
+                </div>
                 <div class="text-style-bar" id="headline-style">
                   <input
                     type="number"
@@ -1995,6 +2072,81 @@
                   id="subheadline-font"
                   value="-apple-system, BlinkMacSystemFont, 'SF Pro Display'"
                 />
+                <div class="arabic-font-row">
+                  <label class="arabic-font-label">Arabic / RTL Font</label>
+                  <div class="font-picker" id="sub-arabic-font-picker">
+                    <button
+                      class="font-picker-trigger"
+                      id="sub-arabic-font-picker-trigger"
+                    >
+                      <span
+                        class="font-picker-preview"
+                        id="sub-arabic-font-picker-preview"
+                        >Noto Sans Arabic</span
+                      >
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    </button>
+                    <div
+                      class="font-picker-dropdown"
+                      id="sub-arabic-font-picker-dropdown"
+                    >
+                      <div class="font-picker-search">
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <circle cx="11" cy="11" r="8" />
+                          <path d="M21 21l-4.35-4.35" />
+                        </svg>
+                        <input
+                          type="text"
+                          id="sub-arabic-font-search"
+                          placeholder="Search fonts..."
+                          autocomplete="off"
+                        />
+                      </div>
+                      <div class="font-picker-categories">
+                        <button
+                          class="font-category active"
+                          data-category="popular"
+                        >
+                          Popular
+                        </button>
+                        <button class="font-category" data-category="system">
+                          System
+                        </button>
+                        <button class="font-category" data-category="all">
+                          All
+                        </button>
+                        <button class="font-category" data-category="custom">
+                          Custom
+                        </button>
+                      </div>
+                      <div
+                        class="font-picker-list"
+                        id="sub-arabic-font-picker-list"
+                      ></div>
+                    </div>
+                  </div>
+                  <input
+                    type="hidden"
+                    id="sub-arabic-font"
+                    value="'Noto Sans Arabic', 'Segoe UI', sans-serif"
+                  />
+                </div>
                 <div class="text-style-bar" id="subheadline-style">
                   <input
                     type="number"
