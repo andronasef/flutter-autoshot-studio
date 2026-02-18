@@ -253,6 +253,43 @@
                   />
                 </svg>
               </button>
+              <button
+                class="project-btn"
+                id="export-project-btn"
+                title="Export Project"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+              </button>
+              <button
+                class="project-btn"
+                id="import-project-btn"
+                title="Import Project"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                  <polyline points="7 14 12 9 17 14" />
+                  <line x1="12" y1="9" x2="12" y2="21" />
+                </svg>
+              </button>
+              <input type="file" id="import-project-input" accept=".autoshot,.json" hidden />
             </div>
           </div>
 
@@ -306,6 +343,7 @@
           </div>
 
           <input type="file" id="file-input" multiple accept="image/*" hidden />
+          <input type="file" id="custom-font-input" accept=".ttf,.otf,.woff,.woff2" hidden />
           <div class="screenshot-list" id="screenshot-list">
             <!-- Screenshots will be added here dynamically -->
           </div>
@@ -1641,6 +1679,9 @@
                       <button class="font-category" data-category="all">
                         All
                       </button>
+                      <button class="font-category" data-category="custom">
+                        Custom
+                      </button>
                     </div>
                     <div class="font-picker-list" id="font-picker-list">
                       <!-- Font options populated by JS -->
@@ -1877,6 +1918,9 @@
                       </button>
                       <button class="font-category" data-category="all">
                         All
+                      </button>
+                      <button class="font-category" data-category="custom">
+                        Custom
                       </button>
                     </div>
                     <div
@@ -2452,6 +2496,9 @@
                         </button>
                         <button class="font-category" data-category="all">
                           All
+                        </button>
+                        <button class="font-category" data-category="custom">
+                          Custom
                         </button>
                       </div>
                       <div

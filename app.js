@@ -753,6 +753,7 @@ const languageFlags = {
 const googleFonts = {
   loaded: new Set(),
   loading: new Set(),
+  custom: [], // Uploaded custom fonts: { name, value }
   // Popular fonts that are commonly used for marketing/app store
   popular: [
     "Inter",
@@ -893,6 +894,10 @@ async function loadGoogleFont(fontName) {
   // Check if it's a system font
   const isSystem = googleFonts.system.some((f) => f.name === fontName);
   if (isSystem) return;
+
+  // Check if it's a custom uploaded font (already loaded via FontFace API)
+  const isCustom = googleFonts.custom.some((f) => f.name === fontName);
+  if (isCustom) return;
 
   // If already loaded, just ensure the current weight is available
   if (googleFonts.loaded.has(fontName)) {
@@ -2152,6 +2157,9 @@ const fontPickerState = {
   element: { category: "popular", search: "" },
 };
 
+// Tracks which picker triggered the custom font upload
+let _customFontUploadContext = null;
+
 // Initialize all font pickers
 function initFontPicker() {
   initSingleFontPicker("headline", {
@@ -2194,6 +2202,26 @@ function initFontPicker() {
         setElementProperty(selectedElementId, "font", value);
     },
   });
+
+  // Custom font upload handler (shared across all pickers)
+  const customFontInput = document.getElementById("custom-font-input");
+  if (customFontInput) {
+    customFontInput.addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      e.target.value = "";
+      const fontName = file.name.replace(/\.[^/.]+$/, "");
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        await saveCustomFont(fontName, arrayBuffer, file.type || "font/truetype");
+        if (_customFontUploadContext) {
+          renderFontList(_customFontUploadContext.pickerId, _customFontUploadContext.ids);
+        }
+      } catch (err) {
+        await showAppAlert("Failed to load font: " + err.message, "error");
+      }
+    });
+  }
 }
 
 // Initialize a single font picker instance
@@ -2275,6 +2303,12 @@ async function renderFontList(pickerId, ids) {
       value: `'${name}', sans-serif`,
       category: "google",
     }));
+  } else if (pickerState.category === "custom") {
+    fonts = googleFonts.custom.map((f) => ({
+      name: f.name,
+      value: f.value,
+      category: "custom",
+    }));
   } else {
     // All fonts
     const allFonts = await fetchAllGoogleFonts();
@@ -2299,38 +2333,77 @@ async function renderFontList(pickerId, ids) {
     );
   }
 
+  // Build upload row HTML for custom category
+  const uploadRowHtml = pickerState.category === "custom"
+    ? `<div class="font-upload-row">
+        <button class="font-upload-btn" type="button">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          Upload Font
+        </button>
+        <span class="font-upload-note">.ttf .otf .woff .woff2</span>
+      </div>`
+    : "";
+
   // Limit to prevent performance issues
   const displayFonts = fonts.slice(0, 100);
 
   if (displayFonts.length === 0) {
-    fontList.innerHTML = '<div class="font-picker-empty">No fonts found</div>';
-    return;
+    if (pickerState.category === "custom") {
+      fontList.innerHTML = uploadRowHtml + '<div class="font-picker-empty">No custom fonts yet. Upload one above.</div>';
+    } else {
+      fontList.innerHTML = '<div class="font-picker-empty">No fonts found</div>';
+    }
+  } else {
+    fontList.innerHTML = uploadRowHtml + displayFonts
+      .map((font) => {
+        const isSelected =
+          currentFont &&
+          (currentFont.includes(font.name) || currentFont === font.value);
+        const isLoaded =
+          font.category === "system" || font.category === "custom" || googleFonts.loaded.has(font.name);
+        const isLoading = googleFonts.loading.has(font.name);
+
+        return `
+              <div class="font-option ${isSelected ? "selected" : ""}"
+                   data-font-name="${font.name}"
+                   data-font-value="${font.value}"
+                   data-font-category="${font.category}">
+                  <span class="font-option-name" style="font-family: ${isLoaded ? font.value : "inherit"}">${font.name}</span>
+                  ${
+                    isLoading
+                      ? '<span class="font-option-loading">Loading...</span>'
+                      : `<span class="font-option-category">${font.category}</span>`
+                  }
+                  ${font.category === "custom" ? `<button class="font-option-delete" data-font-name="${font.name}" title="Remove font" type="button">×</button>` : ""}
+              </div>
+          `;
+      })
+      .join("");
   }
 
-  fontList.innerHTML = displayFonts
-    .map((font) => {
-      const isSelected =
-        currentFont &&
-        (currentFont.includes(font.name) || currentFont === font.value);
-      const isLoaded =
-        font.category === "system" || googleFonts.loaded.has(font.name);
-      const isLoading = googleFonts.loading.has(font.name);
-
-      return `
-            <div class="font-option ${isSelected ? "selected" : ""}"
-                 data-font-name="${font.name}"
-                 data-font-value="${font.value}"
-                 data-font-category="${font.category}">
-                <span class="font-option-name" style="font-family: ${isLoaded ? font.value : "inherit"}">${font.name}</span>
-                ${
-                  isLoading
-                    ? '<span class="font-option-loading">Loading...</span>'
-                    : `<span class="font-option-category">${font.category}</span>`
-                }
-            </div>
-        `;
-    })
-    .join("");
+  // Upload button handler (for custom category)
+  if (pickerState.category === "custom") {
+    const uploadBtn = fontList.querySelector(".font-upload-btn");
+    if (uploadBtn) {
+      uploadBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        _customFontUploadContext = { pickerId, ids };
+        document.getElementById("custom-font-input").click();
+      });
+    }
+    // Delete button handlers
+    fontList.querySelectorAll(".font-option-delete").forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        deleteCustomFont(btn.dataset.fontName);
+        renderFontList(pickerId, ids);
+      });
+    });
+  }
 
   // Add click handlers
   fontList.querySelectorAll(".font-option").forEach((option) => {
@@ -2552,9 +2625,10 @@ const noScreenshot = document.getElementById("no-screenshot");
 // IndexedDB for larger storage (can store hundreds of MB vs localStorage's 5-10MB)
 let db = null;
 const DB_NAME = "AppStoreScreenshotGenerator";
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const PROJECTS_STORE = "projects";
 const META_STORE = "meta";
+const FONTS_STORE = "fonts";
 
 let currentProjectId = "default";
 let projects = [{ id: "default", name: "Default Project", screenshotCount: 0 }];
@@ -2592,6 +2666,11 @@ function openDatabase() {
         if (!database.objectStoreNames.contains(META_STORE)) {
           database.createObjectStore(META_STORE, { keyPath: "key" });
         }
+
+        // Create fonts store for custom uploaded fonts
+        if (!database.objectStoreNames.contains(FONTS_STORE)) {
+          database.createObjectStore(FONTS_STORE, { keyPath: "name" });
+        }
       };
 
       request.onblocked = () => {
@@ -2602,6 +2681,165 @@ function openDatabase() {
       console.error("Failed to open IndexedDB:", e);
       resolve(null);
     }
+  });
+}
+
+// ─── Custom Fonts ────────────────────────────────────────────────────────────
+
+async function loadCustomFonts() {
+  if (!db) return;
+  return new Promise((resolve) => {
+    try {
+      const transaction = db.transaction([FONTS_STORE], "readonly");
+      const store = transaction.objectStore(FONTS_STORE);
+      const request = store.getAll();
+
+      request.onsuccess = async () => {
+        const fonts = request.result || [];
+        for (const font of fonts) {
+          try {
+            const fontFace = new FontFace(font.name, `url(${font.dataURL})`);
+            const loaded = await fontFace.load();
+            document.fonts.add(loaded);
+            if (!googleFonts.custom.some((f) => f.name === font.name)) {
+              googleFonts.custom.push({ name: font.name, value: `'${font.name}', sans-serif` });
+            }
+            googleFonts.loaded.add(font.name);
+          } catch (e) {
+            console.error("Failed to load custom font:", font.name, e);
+          }
+        }
+        resolve();
+      };
+      request.onerror = () => resolve();
+    } catch (e) {
+      resolve();
+    }
+  });
+}
+
+async function saveCustomFont(name, arrayBuffer, mimeType) {
+  // Load font immediately via FontFace API
+  const fontFace = new FontFace(name, arrayBuffer);
+  const loaded = await fontFace.load();
+  document.fonts.add(loaded);
+
+  // Convert ArrayBuffer to base64 dataURL for storage
+  const uint8 = new Uint8Array(arrayBuffer);
+  let binary = "";
+  for (let i = 0; i < uint8.length; i++) binary += String.fromCharCode(uint8[i]);
+  const base64 = btoa(binary);
+  const dataURL = `data:${mimeType || "font/truetype"};base64,${base64}`;
+
+  // Update in-memory list (replace if name already exists)
+  googleFonts.custom = googleFonts.custom.filter((f) => f.name !== name);
+  googleFonts.custom.push({ name, value: `'${name}', sans-serif` });
+  googleFonts.loaded.add(name);
+
+  // Persist to IndexedDB
+  if (db) {
+    const transaction = db.transaction([FONTS_STORE], "readwrite");
+    transaction.objectStore(FONTS_STORE).put({ name, dataURL, mimeType: mimeType || "font/truetype" });
+  }
+}
+
+function deleteCustomFont(name) {
+  googleFonts.custom = googleFonts.custom.filter((f) => f.name !== name);
+  googleFonts.loaded.delete(name);
+  if (db) {
+    const transaction = db.transaction([FONTS_STORE], "readwrite");
+    transaction.objectStore(FONTS_STORE).delete(name);
+  }
+}
+
+// ─── Export / Import Project ─────────────────────────────────────────────────
+
+async function exportProject() {
+  if (!db) {
+    await showAppAlert("Database not available", "error");
+    return;
+  }
+  return new Promise((resolve) => {
+    const transaction = db.transaction([PROJECTS_STORE], "readonly");
+    const store = transaction.objectStore(PROJECTS_STORE);
+    const request = store.get(currentProjectId);
+
+    request.onsuccess = () => {
+      const projectData = request.result;
+      if (!projectData) {
+        showAppAlert("Could not read project data", "error");
+        resolve();
+        return;
+      }
+      const currentProject = projects.find((p) => p.id === currentProjectId);
+      const exportData = {
+        exportVersion: 1,
+        exportedAt: new Date().toISOString(),
+        projectName: currentProject?.name || "Project",
+        data: projectData,
+      };
+      const blob = new Blob([JSON.stringify(exportData)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${(currentProject?.name || "project").replace(/[^a-z0-9_\-]/gi, "_")}.autoshot`;
+      a.click();
+      URL.revokeObjectURL(url);
+      resolve();
+    };
+    request.onerror = () => {
+      showAppAlert("Failed to export project", "error");
+      resolve();
+    };
+  });
+}
+
+async function importProject(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const parsed = JSON.parse(e.target.result);
+        let projectData, projectName;
+
+        if (parsed.exportVersion && parsed.data) {
+          projectData = parsed.data;
+          projectName = parsed.projectName || "Imported Project";
+        } else if (parsed.screenshots) {
+          projectData = parsed;
+          projectName = "Imported Project";
+        } else {
+          await showAppAlert("Invalid or unrecognized project file", "error");
+          resolve();
+          return;
+        }
+
+        const newId = "project_" + Date.now();
+        projectData.id = newId;
+        projects.push({ id: newId, name: projectName + " (Imported)", screenshotCount: projectData.screenshots?.length || 0 });
+        saveProjectsMeta();
+
+        const transaction = db.transaction([PROJECTS_STORE], "readwrite");
+        transaction.objectStore(PROJECTS_STORE).put(projectData);
+        transaction.oncomplete = async () => {
+          await switchProject(newId);
+          updateProjectSelector();
+          resolve();
+        };
+        transaction.onerror = async () => {
+          await showAppAlert("Failed to save imported project", "error");
+          resolve();
+        };
+      } catch (err) {
+        await showAppAlert("Failed to import project: " + err.message, "error");
+        resolve();
+      }
+    };
+    reader.onerror = async () => {
+      await showAppAlert("Failed to read file", "error");
+      resolve();
+    };
+    reader.readAsText(file);
   });
 }
 
@@ -2699,6 +2937,7 @@ async function init() {
   try {
     await openDatabase();
     await loadProjectsMeta();
+    await loadCustomFonts();
     await loadState();
     syncUIWithState();
     updateCanvas();
@@ -5285,6 +5524,21 @@ function setupEventListeners() {
         `Are you sure you want to delete "${project ? project.name : "this project"}"? This cannot be undone.`;
       document.getElementById("delete-project-modal").classList.add("visible");
     });
+
+  document.getElementById("export-project-btn").addEventListener("click", () => {
+    exportProject();
+  });
+
+  document.getElementById("import-project-btn").addEventListener("click", () => {
+    document.getElementById("import-project-input").click();
+  });
+
+  document.getElementById("import-project-input").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    e.target.value = "";
+    await importProject(file);
+  });
 
   // Project modal buttons
   document
