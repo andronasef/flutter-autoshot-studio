@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.3.0] — 2026-02-19
+
+### Added
+
+- **Text Editor modal** — spreadsheet-style dialog to edit all headlines and subheadlines across every screenshot and language in one place; opened via the grid icon in the toolbar
+- **Save button + auto-save indicator** — explicit Save button in the toolbar; a `Saved ✓` badge appears briefly after any save to confirm persistence
+- **Translation instructions** — free-text field in both the single-screenshot translate modal and the batch "Translate All" dialog; instructions are sent to the AI as style guidelines and saved to `localStorage`
+- **RTL text support** — Arabic, Hebrew, Farsi, Urdu, and other RTL languages now render right-to-left in both the canvas headline/subheadline and the sidebar text inputs; direction is detected automatically per language
+- **Project export / import** — projects can be exported to a single `.autoshot` file and re-imported on any machine; all screenshots, settings, fonts, and layout are preserved
+- **Custom font upload** — upload `.ttf`, `.otf`, `.woff`, or `.woff2` files; fonts are stored in IndexedDB and appear in the font picker alongside Google Fonts
+- **Toolbar grouping** — a visual separator divides tool buttons (language picker, Magical Titles, Text Editor) from utility buttons (Save, About, Settings) for a cleaner header
+
+### Changed
+
+- Codebase split from a single `app.js` (~11 000 lines) and `styles.css` (~3 900 lines) into 13 focused JS modules (`js/`) and 11 CSS modules (`css/`) for maintainability
+- Text Editor cells use compact single-line `<input>` fields instead of auto-growing textareas, keeping the table readable at any zoom level
+
+---
+
 ## [1.2.0] — 2026-02-18
 
 ### Added

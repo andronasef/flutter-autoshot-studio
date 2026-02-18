@@ -1236,10 +1236,10 @@ function renderTextEditorTable() {
 
   const langs = state.projectLanguages;
 
-  // Build table
+  // Build compact spreadsheet table — one row per screenshot, input per cell
   let html = '<table class="text-editor-table"><thead><tr>';
-  html += '<th style="width:30px">#</th>';
-  html += '<th style="width:90px">Screenshot</th>';
+  html += '<th class="te-th-num">#</th>';
+  html += '<th class="te-th-name">Screenshot</th>';
   langs.forEach((lang) => {
     const flag = languageFlags[lang] || "🏳️";
     const name = languageNames[lang] || lang.toUpperCase();
@@ -1247,25 +1247,24 @@ function renderTextEditorTable() {
   });
   html += "</tr>";
 
-  // Sub-header row for Headline / Sub
-  html += "<tr>";
+  // Sub-header: Headline / Sub labels
+  html += '<tr class="te-subheader">';
   html += "<th></th><th></th>";
   langs.forEach(() => {
-    html +=
-      '<th class="lang-header" style="font-weight:400; font-size:11px; color: var(--text-tertiary);">Headline</th>';
-    html +=
-      '<th style="font-weight:400; font-size:11px; color: var(--text-tertiary);">Sub</th>';
+    html += '<th class="lang-header te-subth">Headline</th>';
+    html += '<th class="te-subth">Sub</th>';
   });
   html += "</tr></thead><tbody>";
 
   state.screenshots.forEach((screenshot, index) => {
     const displayName = screenshot.name
-      ? screenshot.name.replace(/\.[^.]+$/, "").substring(0, 20)
+      ? screenshot.name.replace(/\.[^.]+$/, "").substring(0, 18)
       : `Screen ${index + 1}`;
+    const rowClass = index % 2 === 0 ? "te-row-even" : "te-row-odd";
 
-    html += `<tr data-index="${index}">`;
-    html += `<td class="screenshot-num">${index + 1}</td>`;
-    html += `<td class="screenshot-name" title="${screenshot.name || ""}">${displayName}</td>`;
+    html += `<tr class="${rowClass}" data-index="${index}">`;
+    html += `<td class="te-num">${index + 1}</td>`;
+    html += `<td class="te-name" title="${escapeHtml(screenshot.name || "")}">${escapeHtml(displayName)}</td>`;
 
     langs.forEach((lang) => {
       const text = screenshot.text || {};
@@ -1273,25 +1272,19 @@ function renderTextEditorTable() {
       const sub = (text.subheadlines && text.subheadlines[lang]) || "";
       const isRtl = isRtlLanguage(lang);
 
-      html += `<td class="lang-col">
-        <textarea
-          class="te-headline"
-          data-index="${index}"
-          data-lang="${lang}"
-          rows="2"
+      html += `<td class="te-cell lang-col">
+        <input type="text" class="te-input te-headline"
+          data-index="${index}" data-lang="${lang}"
           dir="${isRtl ? "rtl" : "ltr"}"
-          placeholder="Headline..."
-        >${escapeHtml(headline)}</textarea>
+          placeholder="Headline…"
+          value="${escapeAttr(headline)}" />
       </td>`;
-      html += `<td>
-        <textarea
-          class="te-subheadline"
-          data-index="${index}"
-          data-lang="${lang}"
-          rows="2"
+      html += `<td class="te-cell">
+        <input type="text" class="te-input te-subheadline"
+          data-index="${index}" data-lang="${lang}"
           dir="${isRtl ? "rtl" : "ltr"}"
-          placeholder="Sub..."
-        >${escapeHtml(sub)}</textarea>
+          placeholder="Sub…"
+          value="${escapeAttr(sub)}" />
       </td>`;
     });
 
@@ -1301,37 +1294,32 @@ function renderTextEditorTable() {
   html += "</tbody></table>";
   container.innerHTML = html;
 
-  // Auto-resize textareas on load and input + wire up live save
-  container.querySelectorAll("textarea").forEach((ta) => {
-    autoResizeTextarea(ta);
-    ta.addEventListener("input", () => {
-      autoResizeTextarea(ta);
-      const idx = parseInt(ta.dataset.index);
-      const lang = ta.dataset.lang;
+  // Live-update state on every keystroke
+  container.querySelectorAll(".te-input").forEach((inp) => {
+    inp.addEventListener("input", () => {
+      const idx = parseInt(inp.dataset.index);
+      const lang = inp.dataset.lang;
       const screenshot = state.screenshots[idx];
       if (!screenshot || !screenshot.text) return;
 
-      if (ta.classList.contains("te-headline")) {
+      if (inp.classList.contains("te-headline")) {
         if (!screenshot.text.headlines) screenshot.text.headlines = {};
-        if (!screenshot.text.headlineLanguages.includes(lang)) {
+        if (!screenshot.text.headlineLanguages.includes(lang))
           screenshot.text.headlineLanguages.push(lang);
-        }
-        screenshot.text.headlines[lang] = ta.value;
+        screenshot.text.headlines[lang] = inp.value;
       } else {
         if (!screenshot.text.subheadlines) screenshot.text.subheadlines = {};
-        if (!screenshot.text.subheadlineLanguages.includes(lang)) {
+        if (!screenshot.text.subheadlineLanguages.includes(lang))
           screenshot.text.subheadlineLanguages.push(lang);
-        }
-        screenshot.text.subheadlines[lang] = ta.value;
-        if (ta.value.trim()) screenshot.text.subheadlineEnabled = true;
+        screenshot.text.subheadlines[lang] = inp.value;
+        if (inp.value.trim()) screenshot.text.subheadlineEnabled = true;
       }
     });
   });
 }
 
-function autoResizeTextarea(ta) {
-  ta.style.height = "auto";
-  ta.style.height = Math.max(36, ta.scrollHeight) + "px";
+function escapeAttr(str) {
+  return String(str).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
 }
 
 function escapeHtml(str) {

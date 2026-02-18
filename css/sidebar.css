@@ -34,6 +34,15 @@
 .sidebar-header-buttons {
   display: flex;
   gap: 4px;
+  align-items: center;
+}
+
+.btn-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+  margin: 0 3px;
+  flex-shrink: 0;
 }
 
 .settings-btn img {
@@ -121,4 +130,3 @@
     transform: translateY(0);
   }
 }
-

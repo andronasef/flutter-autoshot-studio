@@ -817,11 +817,12 @@
 
 /* Text Editor Modal */
 .text-editor-modal {
-  max-width: 90vw;
-  width: 900px;
-  max-height: 85vh;
+  max-width: 92vw;
+  width: 960px;
+  max-height: 82vh;
   display: flex;
   flex-direction: column;
+  padding: 24px;
 }
 
 .text-editor-content {
@@ -830,19 +831,22 @@
   flex: 1;
   border: 1px solid var(--border);
   border-radius: 8px;
+  min-height: 0;
 }
 
+/* ── Table ── */
 .text-editor-table {
-  width: 100%;
   border-collapse: collapse;
   font-size: 12px;
+  /* don't stretch to full width — let it size to content */
 }
 
 .text-editor-table th {
   background: var(--bg-tertiary);
   color: var(--text-secondary);
-  font-weight: 500;
-  padding: 8px 10px;
+  font-weight: 600;
+  font-size: 11px;
+  padding: 7px 10px;
   text-align: left;
   border-bottom: 1px solid var(--border);
   position: sticky;
@@ -853,73 +857,94 @@
 
 .text-editor-table th.lang-header {
   border-left: 1px solid var(--border);
+  text-align: center;
 }
 
+.te-subheader th {
+  font-weight: 400;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  padding: 4px 10px;
+  background: var(--bg-secondary);
+  top: 31px; /* stacks below first header row */
+}
+
+.te-subth {
+  text-align: center;
+}
+
+.te-th-num {
+  width: 28px;
+}
+.te-th-name {
+  width: 100px;
+}
+
+/* ── Body rows ── */
 .text-editor-table td {
   padding: 4px 6px;
-  border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
-  vertical-align: top;
-}
-
-.text-editor-table td.screenshot-num {
-  color: var(--text-tertiary);
-  font-size: 11px;
-  padding: 8px 6px;
-  white-space: nowrap;
+  border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.05));
   vertical-align: middle;
 }
 
-.text-editor-table td.screenshot-name {
+.te-row-even td {
+  background: transparent;
+}
+.te-row-odd td {
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.te-num {
+  color: var(--text-tertiary);
+  font-size: 11px;
+  text-align: center;
+  padding: 0 4px;
+  white-space: nowrap;
+}
+
+.te-name {
   color: var(--text-secondary);
   font-size: 11px;
   max-width: 100px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  padding: 8px 8px;
-  vertical-align: middle;
+  padding: 0 8px;
 }
 
-.text-editor-table tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.text-editor-cell {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.text-editor-label {
-  font-size: 10px;
-  color: var(--text-tertiary);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-
-.text-editor-cell textarea {
-  width: 180px;
-  min-height: 36px;
+.te-cell {
   padding: 4px 6px;
+}
+
+.te-cell.lang-col {
+  border-left: 1px solid var(--border);
+}
+
+/* ── Inputs ── */
+.te-input {
+  display: block;
+  width: 160px;
+  height: 28px;
+  padding: 0 8px;
   background: var(--bg-tertiary);
   border: 1px solid transparent;
-  border-radius: 4px;
+  border-radius: 5px;
   color: var(--text-primary);
   font-size: 12px;
   font-family: inherit;
-  resize: none;
-  transition: border-color 0.15s;
-  overflow: hidden;
+  box-sizing: border-box;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
 }
 
-.text-editor-cell textarea:focus {
+.te-input:focus {
   outline: none;
   border-color: var(--accent);
   background: var(--bg-hover);
 }
 
-.text-editor-table td.lang-col {
-  border-left: 1px solid var(--border);
-  padding: 6px 8px;
+.te-input::placeholder {
+  color: var(--text-tertiary);
+  font-style: italic;
 }
