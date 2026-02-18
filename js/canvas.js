@@ -59,9 +59,9 @@ const playStoreFolder = {
   "android-phone": "phoneScreenshots",
   "android-phone-hd": "phoneScreenshots",
   "android-tablet-7": "sevenInchScreenshots",
-  "android-tablet-10": "sevenInchScreenshots",
-  "ipad-12.9": "sevenInchScreenshots",
-  "ipad-11": "sevenInchScreenshots",
+  "android-tablet-10": "tenInchScreenshots",
+  "ipad-12.9": "tenInchScreenshots",
+  "ipad-11": "tenInchScreenshots",
   "web-og": "phoneScreenshots",
   "web-twitter": "phoneScreenshots",
   "web-hero": "phoneScreenshots",
@@ -916,12 +916,24 @@ async function exportAllForLanguage(lang) {
 
     const folder = playStoreFolder[state.outputDevice] || "phoneScreenshots";
     folderCounters[folder] = (folderCounters[folder] || 0) + 1;
+    const num = folderCounters[folder];
     // Naming: {locale}/images/{folder}/{num}_{locale}.jpeg  (Google Play Store convention)
-    zip.file(
-      `${locale}/images/${folder}/${folderCounters[folder]}_${locale}.jpeg`,
-      base64Data,
-      { base64: true },
-    );
+    zip.file(`${locale}/images/${folder}/${num}_${locale}.jpeg`, base64Data, {
+      base64: true,
+    });
+    // Mirror all tablet folders — sevenInchScreenshots and tenInchScreenshots always contain identical images
+    if (folder === "sevenInchScreenshots" || folder === "tenInchScreenshots") {
+      const mirror =
+        folder === "sevenInchScreenshots"
+          ? "tenInchScreenshots"
+          : "sevenInchScreenshots";
+      folderCounters[mirror] = (folderCounters[mirror] || 0) + 1;
+      zip.file(
+        `${locale}/images/${mirror}/${folderCounters[mirror]}_${locale}.jpeg`,
+        base64Data,
+        { base64: true },
+      );
+    }
 
     // Yield to UI thread so progress modal updates
     const percent = Math.round(((i + 1) / total) * 90);
@@ -1023,12 +1035,27 @@ async function exportAllLanguages() {
 
       const folder = playStoreFolder[state.outputDevice] || "phoneScreenshots";
       folderCounters[folder] = (folderCounters[folder] || 0) + 1;
+      const num = folderCounters[folder];
       // Naming: {locale}/images/{folder}/{num}_{locale}.jpeg  (Google Play Store convention)
-      zip.file(
-        `${locale}/images/${folder}/${folderCounters[folder]}_${locale}.jpeg`,
-        base64Data,
-        { base64: true },
-      );
+      zip.file(`${locale}/images/${folder}/${num}_${locale}.jpeg`, base64Data, {
+        base64: true,
+      });
+      // Mirror all tablet folders — sevenInchScreenshots and tenInchScreenshots always contain identical images
+      if (
+        folder === "sevenInchScreenshots" ||
+        folder === "tenInchScreenshots"
+      ) {
+        const mirror =
+          folder === "sevenInchScreenshots"
+            ? "tenInchScreenshots"
+            : "sevenInchScreenshots";
+        folderCounters[mirror] = (folderCounters[mirror] || 0) + 1;
+        zip.file(
+          `${locale}/images/${mirror}/${folderCounters[mirror]}_${locale}.jpeg`,
+          base64Data,
+          { base64: true },
+        );
+      }
 
       completedItems++;
       const percent = Math.round((completedItems / totalItems) * 90);
