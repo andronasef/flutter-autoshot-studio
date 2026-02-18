@@ -1,5 +1,8 @@
 /* ===== State management & runtime vars ===== */
 /* auto-split from app.js lines 1–127 */
+
+const APP_VERSION = "1.4.0";
+
 // State management
 const state = {
   screenshots: [],

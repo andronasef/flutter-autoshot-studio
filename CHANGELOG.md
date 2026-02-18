@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.4.0] — 2026-02-20
+
+### Added
+
+- **Arabic / RTL Font** — dedicated font picker for Arabic and other RTL languages (headline + subheadline); auto-applied when the active language is Arabic, Hebrew, Persian, Urdu, Yiddish, or Dhivehi; defaults to _Noto Sans Arabic_
+- **Fastlane-compatible export naming** — exported files use BCP-47 locale codes and Fastlane device folder prefixes (e.g. `en-US_iPhone69_1.png`, folder layout `ar-SA/ipad129_1.png`) for direct upload via Fastlane's `deliver` or `supply` actions
+- **Version indicator** — About modal shows the current app version and silently checks GitHub Releases for a newer version; a yellow dot appears on the About button when an update is available
+
+### Fixed
+
+- **Export All per-category sizing** — Export All now renders each screenshot at its own category's correct output dimensions (phone screenshots at the phone size, tablet screenshots at the tablet size) with independent per-category file numbering
+- **Arabic / RTL font not applied** — Arabic font fields were missing from `baseTextDefaults` (captured at startup), causing them to be `undefined` even after setting; old persisted screenshots now receive correct fallback values via `normalizeTextSettings`
+
+### Changed
+
+- **Left sidebar compacted** — _Add Screenshots_ is a full-width primary button; _Blank_ and _autoshot_ are a smaller secondary row below; padding and margins tightened throughout the left sidebar
+
+---
+
 ## [1.3.0] — 2026-02-19
 
 ### Added

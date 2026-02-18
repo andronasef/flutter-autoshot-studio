@@ -1164,6 +1164,7 @@ function setupEventListeners() {
   // About modal
   document.getElementById("about-btn").addEventListener("click", () => {
     document.getElementById("about-modal").classList.add("visible");
+    checkForUpdates();
   });
 
   document.getElementById("about-modal-close").addEventListener("click", () => {
@@ -1980,4 +1981,59 @@ function setupEventListeners() {
     }
     updateCanvas(); // Keep export canvas in sync
   });
+}
+
+/* ===== Version / Update check ===== */
+
+function compareVersions(a, b) {
+  const pa = a.split(".").map(Number);
+  const pb = b.split(".").map(Number);
+  for (let i = 0; i < 3; i++) {
+    if ((pa[i] ?? 0) > (pb[i] ?? 0)) return 1;
+    if ((pa[i] ?? 0) < (pb[i] ?? 0)) return -1;
+  }
+  return 0;
+}
+
+async function checkForUpdates() {
+  const badge = document.getElementById("about-update-badge");
+  const versionText = document.getElementById("about-version-text");
+  if (!badge) return;
+
+  if (versionText) versionText.textContent = `v${APP_VERSION}`;
+
+  // Reset to checking state
+  badge.style.display = "inline";
+  badge.textContent = "Checking for updates…";
+  badge.style.background = "rgba(255,255,255,0.07)";
+  badge.style.color = "var(--text-muted)";
+
+  try {
+    const res = await fetch(
+      "https://api.github.com/repos/YUZU-Hub/appscreen/releases/latest",
+      { headers: { Accept: "application/vnd.github.v3+json" } },
+    );
+    if (!res.ok) throw new Error("response not ok");
+    const data = await res.json();
+    const latestTag = (data.tag_name ?? "").replace(/^v/, "");
+    if (!latestTag) throw new Error("no tag");
+
+    if (compareVersions(APP_VERSION, latestTag) >= 0) {
+      badge.textContent = "✓ Up to date";
+      badge.style.background = "rgba(34, 197, 94, 0.15)";
+      badge.style.color = "#22c55e";
+      const dot = document.getElementById("update-dot");
+      if (dot) dot.style.display = "none";
+    } else {
+      badge.innerHTML = `⬆ v${latestTag} available &mdash; <a href="${data.html_url}" target="_blank" style="color:inherit;text-decoration:underline">View release</a>`;
+      badge.style.background = "rgba(251, 191, 36, 0.15)";
+      badge.style.color = "#fbbf24";
+      const dot = document.getElementById("update-dot");
+      if (dot) dot.style.display = "block";
+    }
+  } catch {
+    badge.textContent = "Could not check for updates";
+    badge.style.background = "transparent";
+    badge.style.color = "var(--text-muted)";
+  }
 }
