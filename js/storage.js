@@ -479,6 +479,27 @@ function initSync() {
   init();
 }
 
+// Serialize a background object: replace Image DOM object with its src URL string
+function serializeBg(bg) {
+  if (!bg) return bg;
+  const { image, ...rest } = bg;
+  return { ...rest, imageSrc: image?.src || null };
+}
+
+// Reconstruct the Image DOM object from a saved imageSrc data URL
+function restoreBgImage(bg) {
+  if (!bg) return bg;
+  if (bg.imageSrc) {
+    const img = new Image();
+    img.onload = () => updateCanvas();
+    img.src = bg.imageSrc;
+    bg.image = img;
+  } else {
+    bg.image = null;
+  }
+  return bg;
+}
+
 // Save state to IndexedDB for current project
 function saveState() {
   if (!db) return;
@@ -506,7 +527,7 @@ function saveState() {
       category: getCategoryOf(s),
       autoshotScreenName: s.autoshotScreenName || null,
       localizedImages: localizedImages,
-      background: s.background,
+      background: serializeBg(s.background),
       screenshot: s.screenshot,
       text: s.text,
       elements: (s.elements || []).map((el) => ({
@@ -537,7 +558,10 @@ function saveState() {
     categorySettings: state.categorySettings,
     currentLanguage: state.currentLanguage,
     projectLanguages: state.projectLanguages,
-    defaults: state.defaults,
+    defaults: {
+      ...state.defaults,
+      background: serializeBg(state.defaults.background),
+    },
   };
 
   // Update screenshot count in project metadata
@@ -689,9 +713,10 @@ function loadState() {
                   category: s.category || null,
                   autoshotScreenName: s.autoshotScreenName || null,
                   localizedImages: {},
-                  background:
+                  background: restoreBgImage(
                     s.background ||
-                    JSON.parse(JSON.stringify(migratedBackground)),
+                      JSON.parse(JSON.stringify(migratedBackground)),
+                  ),
                   screenshot: screenshotSettings,
                   text: s.text || JSON.parse(JSON.stringify(migratedText)),
                   elements: reconstructElementImages(s.elements),
@@ -734,9 +759,10 @@ function loadState() {
                           category: s.category || null,
                           autoshotScreenName: s.autoshotScreenName || null,
                           localizedImages: localizedImages,
-                          background:
+                          background: restoreBgImage(
                             s.background ||
-                            JSON.parse(JSON.stringify(migratedBackground)),
+                              JSON.parse(JSON.stringify(migratedBackground)),
+                          ),
                           screenshot: screenshotSettings,
                           text:
                             s.text || JSON.parse(JSON.stringify(migratedText)),
@@ -787,9 +813,10 @@ function loadState() {
                     category: s.category || null,
                     autoshotScreenName: s.autoshotScreenName || null,
                     localizedImages: localizedImages,
-                    background:
+                    background: restoreBgImage(
                       s.background ||
-                      JSON.parse(JSON.stringify(migratedBackground)),
+                        JSON.parse(JSON.stringify(migratedBackground)),
+                    ),
                     screenshot: screenshotSettings,
                     text: s.text || JSON.parse(JSON.stringify(migratedText)),
                     elements: reconstructElementImages(s.elements),
@@ -848,6 +875,7 @@ function loadState() {
           // Load defaults (new format) or use migrated settings
           if (parsed.defaults) {
             state.defaults = parsed.defaults;
+            restoreBgImage(state.defaults.background);
             // Ensure elements array exists (may be missing from older saves)
             if (!state.defaults.elements) state.defaults.elements = [];
           } else {

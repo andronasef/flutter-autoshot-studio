@@ -64,6 +64,14 @@ function syncUIWithState() {
   document.getElementById("solid-color-hex").value = bg.solid;
 
   // Image background
+  const bgPreview = document.getElementById("bg-image-preview");
+  if (bg.type === "image" && bg.image?.src) {
+    bgPreview.src = bg.image.src;
+    bgPreview.style.display = "block";
+  } else {
+    bgPreview.src = "";
+    bgPreview.style.display = "none";
+  }
   document.getElementById("bg-image-fit").value = bg.imageFit;
   document.getElementById("bg-blur").value = bg.imageBlur;
   document.getElementById("bg-blur-value").textContent =
