@@ -50,6 +50,25 @@ const fastlaneDevicePrefix = {
   custom: "custom",
 };
 
+// Maps output device to Google Play Store upload folder name
+const playStoreFolder = {
+  "iphone-6.9": "phoneScreenshots",
+  "iphone-6.7": "phoneScreenshots",
+  "iphone-6.5": "phoneScreenshots",
+  "iphone-5.5": "phoneScreenshots",
+  "android-phone": "phoneScreenshots",
+  "android-phone-hd": "phoneScreenshots",
+  "android-tablet-7": "sevenInchScreenshots",
+  "android-tablet-10": "tenInchScreenshots",
+  "ipad-12.9": "tenInchScreenshots",
+  "ipad-11": "tenInchScreenshots",
+  "web-og": "phoneScreenshots",
+  "web-twitter": "phoneScreenshots",
+  "web-hero": "phoneScreenshots",
+  "web-feature": "phoneScreenshots",
+  custom: "phoneScreenshots",
+};
+
 function getFastlaneLocale(lang) {
   return fastlaneLocaleMap[lang] || lang.toUpperCase();
 }
@@ -876,8 +895,8 @@ async function exportAllForLanguage(lang) {
   // Suppress saveState / side-preview updates while rendering export frames
   state.isExporting = true;
 
-  // Per-category counters for Fastlane-compatible numbering
-  const catCounters = { phone: 0, tablet: 0 };
+  // Per-folder counters for Google Play Store folder naming
+  const folderCounters = {};
 
   for (let i = 0; i < state.screenshots.length; i++) {
     // Apply this screenshot's category settings so canvas renders at the right size
@@ -891,16 +910,15 @@ async function exportAllForLanguage(lang) {
     state.selectedIndex = i;
     updateCanvas();
 
-    // Capture canvas data IMMEDIATELY (synchronous 2D draw is already complete)
-    const dataUrl = canvas.toDataURL("image/png");
-    const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
+    // Capture canvas data as JPEG
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.95);
+    const base64Data = dataUrl.replace(/^data:image\/jpeg;base64,/, "");
 
-    catCounters[cat]++;
-    const devicePrefix =
-      fastlaneDevicePrefix[state.outputDevice] || state.outputDevice;
-    // Naming: {locale}/{locale}_{devicePrefix}_{num}.png  (Fastlane deliver convention)
+    const folder = playStoreFolder[state.outputDevice] || "phoneScreenshots";
+    folderCounters[folder] = (folderCounters[folder] || 0) + 1;
+    // Naming: {locale}/images/{folder}/{num}_{locale}.jpeg  (Google Play Store convention)
     zip.file(
-      `${locale}/${locale}_${devicePrefix}_${catCounters[cat]}.png`,
+      `${locale}/images/${folder}/${folderCounters[folder]}_${locale}.jpeg`,
       base64Data,
       { base64: true },
     );
@@ -984,8 +1002,8 @@ async function exportAllLanguages() {
       s.text.currentSubheadlineLang = lang;
     });
 
-    // Per-category counters reset per language
-    const catCounters = { phone: 0, tablet: 0 };
+    // Per-folder counters reset per language (Google Play Store folders)
+    const folderCounters = {};
 
     for (let i = 0; i < state.screenshots.length; i++) {
       // Apply this screenshot's category settings so canvas renders at the right size
@@ -999,16 +1017,15 @@ async function exportAllLanguages() {
       state.selectedIndex = i;
       updateCanvas();
 
-      // Capture canvas data IMMEDIATELY (synchronous 2D draw is already complete)
-      const dataUrl = canvas.toDataURL("image/png");
-      const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
+      // Capture canvas data as JPEG
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.95);
+      const base64Data = dataUrl.replace(/^data:image\/jpeg;base64,/, "");
 
-      catCounters[cat]++;
-      const devicePrefix =
-        fastlaneDevicePrefix[state.outputDevice] || state.outputDevice;
-      // Naming: {locale}/{locale}_{devicePrefix}_{num}.png  (Fastlane deliver convention)
+      const folder = playStoreFolder[state.outputDevice] || "phoneScreenshots";
+      folderCounters[folder] = (folderCounters[folder] || 0) + 1;
+      // Naming: {locale}/images/{folder}/{num}_{locale}.jpeg  (Google Play Store convention)
       zip.file(
-        `${locale}/${locale}_${devicePrefix}_${catCounters[cat]}.png`,
+        `${locale}/images/${folder}/${folderCounters[folder]}_${locale}.jpeg`,
         base64Data,
         { base64: true },
       );
