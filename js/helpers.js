@@ -162,6 +162,12 @@ function normalizeTextSettings(text) {
   merged.currentLayoutLang =
     merged.currentLayoutLang || merged.currentHeadlineLang || "en";
 
+  // Ensure Arabic/RTL font fields are always present
+  if (!merged.headlineArabicFont)
+    merged.headlineArabicFont = "'Noto Sans Arabic', 'Segoe UI', sans-serif";
+  if (!merged.subheadlineArabicFont)
+    merged.subheadlineArabicFont = "'Noto Sans Arabic', 'Segoe UI', sans-serif";
+
   merged.subheadlines = merged.subheadlines || { en: "" };
   merged.subheadlineLanguages = merged.subheadlineLanguages || ["en"];
   merged.currentSubheadlineLang =
@@ -593,4 +599,3 @@ function setCurrentScreenshotAsDefault() {
     state.defaults.text = JSON.parse(JSON.stringify(screenshot.text));
   }
 }
-

@@ -74,6 +74,7 @@ const state = {
       headlineLanguages: ["en"],
       currentHeadlineLang: "en",
       headlineFont: "-apple-system, BlinkMacSystemFont, 'SF Pro Display'",
+      headlineArabicFont: "'Noto Sans Arabic', 'Segoe UI', sans-serif",
       headlineSize: 100,
       headlineWeight: "600",
       headlineItalic: false,
@@ -99,6 +100,7 @@ const state = {
       subheadlineLanguages: ["en"],
       currentSubheadlineLang: "en",
       subheadlineFont: "-apple-system, BlinkMacSystemFont, 'SF Pro Display'",
+      subheadlineArabicFont: "'Noto Sans Arabic', 'Segoe UI', sans-serif",
       subheadlineSize: 50,
       subheadlineWeight: "400",
       subheadlineItalic: false,
@@ -126,4 +128,3 @@ const laurelImages = {};
   img.src = `img/${name}.svg`;
   laurelImages[name] = img;
 });
-

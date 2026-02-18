@@ -150,6 +150,9 @@ function syncUIWithState() {
   document.getElementById("headline-text").value = currentHeadline;
   document.getElementById("headline-text").dir = "auto";
   document.getElementById("headline-font").value = txt.headlineFont;
+  if (document.getElementById("arabic-font"))
+    document.getElementById("arabic-font").value =
+      txt.headlineArabicFont || "'Noto Sans Arabic', 'Segoe UI', sans-serif";
   updateFontPickerPreview();
   document.getElementById("headline-size").value = headlineLayout.headlineSize;
   document.getElementById("headline-color").value = txt.headlineColor;
@@ -179,6 +182,9 @@ function syncUIWithState() {
   document.getElementById("subheadline-text").dir = "auto";
   document.getElementById("subheadline-font").value =
     txt.subheadlineFont || txt.headlineFont;
+  if (document.getElementById("sub-arabic-font"))
+    document.getElementById("sub-arabic-font").value =
+      txt.subheadlineArabicFont || "'Noto Sans Arabic', 'Segoe UI', sans-serif";
   document.getElementById("subheadline-size").value =
     subheadlineLayout.subheadlineSize;
   document.getElementById("subheadline-color").value = txt.subheadlineColor;
