@@ -9,6 +9,7 @@ const state = {
   selectedIndex: 0,
   activeCategory: "phone", // 'phone' | 'tablet'
   transferTarget: null, // Index of screenshot waiting to receive style transfer
+  isExporting: false, // Set true during export to suppress saveState/sidePreview side-effects
   outputDevice: "iphone-6.9",
   currentLanguage: "en", // Global current language for all text
   projectLanguages: ["en"], // Languages available in this project

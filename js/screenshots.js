@@ -991,7 +991,9 @@ function getCanvasDimensions() {
 }
 
 function updateCanvas() {
-  saveState(); // Persist state on every update
+  if (!state.isExporting) {
+    saveState(); // Persist state on every update (skip during export to avoid corrupting saved settings)
+  }
   const dims = getCanvasDimensions();
   canvas.width = dims.width;
   canvas.height = dims.height;
@@ -1052,8 +1054,10 @@ function updateCanvas() {
   // Elements above text
   drawElements(ctx, dims, "above-text");
 
-  // Update side previews
-  updateSidePreviews();
+  // Update side previews (skip during export — they'd render at wrong sizes)
+  if (!state.isExporting) {
+    updateSidePreviews();
+  }
 }
 
 function updateSidePreviews() {
@@ -1684,4 +1688,3 @@ function drawTextToContext(context, dims, txt) {
     }
   }
 }
-

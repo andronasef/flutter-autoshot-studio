@@ -792,7 +792,8 @@ async function exportCurrent() {
   // Ensure canvas is up-to-date (especially important for 3D mode)
   updateCanvas();
 
-  const devicePrefix = getFastlaneDevicePrefix();
+  const devicePrefix =
+    fastlaneDevicePrefix[state.outputDevice] || state.outputDevice;
   const locale = getFastlaneLocale(state.currentLanguage);
   const link = document.createElement("a");
   link.download = `${locale}_${devicePrefix}_${state.selectedIndex + 1}.png`;
@@ -853,6 +854,7 @@ async function exportAllForLanguage(lang) {
   const originalCustomHeight = state.customHeight;
   const zip = new JSZip();
   const total = state.screenshots.length;
+  const locale = getFastlaneLocale(lang);
 
   // Show progress
   const langName = languageNames[lang] || lang.toUpperCase();
@@ -864,18 +866,21 @@ async function exportAllForLanguage(lang) {
     subheadline: s.text.currentSubheadlineLang,
   }));
 
-  // Temporarily switch to the target language (images and text)
+  // Switch to target language (images and text)
   state.currentLanguage = lang;
   state.screenshots.forEach((s) => {
     s.text.currentHeadlineLang = lang;
     s.text.currentSubheadlineLang = lang;
   });
 
+  // Suppress saveState / side-preview updates while rendering export frames
+  state.isExporting = true;
+
   // Per-category counters for Fastlane-compatible numbering
   const catCounters = { phone: 0, tablet: 0 };
 
   for (let i = 0; i < state.screenshots.length; i++) {
-    // Switch output device to match this screenshot's category
+    // Apply this screenshot's category settings so canvas renders at the right size
     const cat = getCategoryOf(state.screenshots[i]);
     const catSettings = state.categorySettings[cat];
     state.activeCategory = cat;
@@ -886,26 +891,31 @@ async function exportAllForLanguage(lang) {
     state.selectedIndex = i;
     updateCanvas();
 
-    // Update progress
-    const percent = Math.round(((i + 1) / total) * 90); // Reserve 10% for ZIP generation
+    // Capture canvas data IMMEDIATELY (synchronous 2D draw is already complete)
+    const dataUrl = canvas.toDataURL("image/png");
+    const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
+
+    catCounters[cat]++;
+    const devicePrefix =
+      fastlaneDevicePrefix[state.outputDevice] || state.outputDevice;
+    // Naming: {locale}/{locale}_{devicePrefix}_{num}.png  (Fastlane deliver convention)
+    zip.file(
+      `${locale}/${locale}_${devicePrefix}_${catCounters[cat]}.png`,
+      base64Data,
+      { base64: true },
+    );
+
+    // Yield to UI thread so progress modal updates
+    const percent = Math.round(((i + 1) / total) * 90);
     showExportProgress(
       "Exporting...",
       `Screenshot ${i + 1} of ${total}`,
       percent,
     );
-
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    // Get canvas data as base64, strip the data URL prefix
-    const dataUrl = canvas.toDataURL("image/png");
-    const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
-
-    catCounters[cat]++;
-    const devicePrefix = getFastlaneDevicePrefix();
-    zip.file(`${devicePrefix}_${catCounters[cat]}.png`, base64Data, {
-      base64: true,
-    });
+    await new Promise((resolve) => setTimeout(resolve, 0));
   }
+
+  state.isExporting = false;
 
   // Restore original settings
   state.selectedIndex = originalIndex;
@@ -918,7 +928,7 @@ async function exportAllForLanguage(lang) {
     s.text.currentHeadlineLang = originalTextLangs[i].headline;
     s.text.currentSubheadlineLang = originalTextLangs[i].subheadline;
   });
-  updateCanvas();
+  updateCanvas(); // Restore preview (this will also saveState properly)
 
   // Generate ZIP
   showExportProgress("Generating ZIP...", "", 95);
@@ -928,7 +938,6 @@ async function exportAllForLanguage(lang) {
   await new Promise((resolve) => setTimeout(resolve, 1500));
   hideExportProgress();
 
-  const locale = getFastlaneLocale(lang);
   const link = document.createElement("a");
   link.download = `screenshots_${locale}.zip`;
   link.href = URL.createObjectURL(content);
@@ -960,22 +969,26 @@ async function exportAllLanguages() {
     subheadline: s.text.currentSubheadlineLang,
   }));
 
+  // Suppress saveState / side-preview updates while rendering export frames
+  state.isExporting = true;
+
   for (let langIdx = 0; langIdx < state.projectLanguages.length; langIdx++) {
     const lang = state.projectLanguages[langIdx];
     const langName = languageNames[lang] || lang.toUpperCase();
+    const locale = getFastlaneLocale(lang);
 
-    // Temporarily switch to this language (images and text)
+    // Switch to this language (images and text)
     state.currentLanguage = lang;
     state.screenshots.forEach((s) => {
       s.text.currentHeadlineLang = lang;
       s.text.currentSubheadlineLang = lang;
     });
 
-    // Per-category counters for Fastlane-compatible numbering (reset per language)
+    // Per-category counters reset per language
     const catCounters = { phone: 0, tablet: 0 };
 
     for (let i = 0; i < state.screenshots.length; i++) {
-      // Switch output device to match this screenshot's category
+      // Apply this screenshot's category settings so canvas renders at the right size
       const cat = getCategoryOf(state.screenshots[i]);
       const catSettings = state.categorySettings[cat];
       state.activeCategory = cat;
@@ -986,33 +999,32 @@ async function exportAllLanguages() {
       state.selectedIndex = i;
       updateCanvas();
 
+      // Capture canvas data IMMEDIATELY (synchronous 2D draw is already complete)
+      const dataUrl = canvas.toDataURL("image/png");
+      const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
+
+      catCounters[cat]++;
+      const devicePrefix =
+        fastlaneDevicePrefix[state.outputDevice] || state.outputDevice;
+      // Naming: {locale}/{locale}_{devicePrefix}_{num}.png  (Fastlane deliver convention)
+      zip.file(
+        `${locale}/${locale}_${devicePrefix}_${catCounters[cat]}.png`,
+        base64Data,
+        { base64: true },
+      );
+
       completedItems++;
-      const percent = Math.round((completedItems / totalItems) * 90); // Reserve 10% for ZIP
+      const percent = Math.round((completedItems / totalItems) * 90);
       showExportProgress(
         "Exporting...",
         `${langName}: Screenshot ${i + 1} of ${totalScreenshots}`,
         percent,
       );
-
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      // Get canvas data as base64, strip the data URL prefix
-      const dataUrl = canvas.toDataURL("image/png");
-      const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
-
-      // Use Fastlane locale folder + device prefix for filename
-      catCounters[cat]++;
-      const locale = getFastlaneLocale(lang);
-      const devicePrefix = getFastlaneDevicePrefix();
-      zip.file(
-        `${locale}/${devicePrefix}_${catCounters[cat]}.png`,
-        base64Data,
-        {
-          base64: true,
-        },
-      );
+      await new Promise((resolve) => setTimeout(resolve, 0));
     }
   }
+
+  state.isExporting = false;
 
   // Restore original settings
   state.selectedIndex = originalIndex;
@@ -1025,7 +1037,7 @@ async function exportAllLanguages() {
     s.text.currentHeadlineLang = originalTextLangs[i].headline;
     s.text.currentSubheadlineLang = originalTextLangs[i].subheadline;
   });
-  updateCanvas();
+  updateCanvas(); // Restore preview (this will also saveState properly)
 
   // Generate ZIP
   showExportProgress("Generating ZIP...", "", 95);
