@@ -9,16 +9,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Agent Instructions
 
 **Development Server:**
+
 - The agent should automatically start the local development server when needed using `python3 -m http.server 8000` (or `npx serve .` as fallback)
 - The agent should run the server in the background and inform the user which URL to open (e.g., `http://localhost:8000`)
 - The agent should NOT ask the user to start the server manually
 - The agent should monitor server logs to detect and report any errors or problems to the user
 
 **Tauri Development:**
+
 - For desktop-specific changes, use `npm run tauri:dev` to start the Tauri development environment
 - Monitor Rust (src-tauri) and JavaScript console for errors
 
 **Git & Commits:**
+
 - The agent should handle all git operations automatically (add, commit, push)
 - Before creating a commit, the agent MUST show the proposed commit message to the user and wait for approval
 - Only after user approval should the agent proceed with the commit
@@ -35,6 +38,7 @@ npx serve .
 ```
 
 To run as a desktop app:
+
 ```bash
 npm run tauri:dev
 ```
@@ -52,12 +56,12 @@ npm run tauri:dev
 - `language-utils.js` - Multi-language support and automated screenshot detection
 
 **Key Features:**
+
 - **Phone / Tablet Tabs**: Separate workspaces for different device categories
 - **Elements & Popouts**: Custom graphics, text, icons, and magnifying crops
 - **AI Magical Titles**: Analyze screens to generate marketing copy automatically
 - **autoshot Import**: Direct integration with Flutter's autoshot package
 - **Multi-Language**: Automated localization and per-language layouts
-
 
 ## Architecture
 
@@ -79,12 +83,14 @@ npm run tauri:dev
 - Per-screenshot settings: each screenshot stores its own background, device, and text settings
 
 **Canvas rendering pipeline (in updateCanvas):**
+
 1. `drawBackground()` - gradient/solid/image with optional blur and overlay
 2. `drawScreenshot()` - positioned, scaled, rotated screenshot with shadow and border
 3. `drawText()` - headline and subheadline with multi-language support
 4. `drawNoise()` - optional noise texture overlay
 
 **3D rendering (in three-renderer.js):**
+
 - Uses Three.js with GLTFLoader for iPhone 15 Pro Max model
 - `initThreeJS()` - initializes scene, camera, renderer, and lights
 - `loadPhoneModel()` - loads the 3D iPhone model from `models/iphone-15-pro-max.glb`
@@ -93,11 +99,13 @@ npm run tauri:dev
 - Drag-to-rotate interaction on the 3D preview canvas
 
 **Multi-language text:**
+
 - `state.text.headlines` and `state.text.subheadlines` are objects keyed by language code
 - `getTextSettings()` returns either global or per-screenshot text depending on toggle state
 - AI translation calls Claude/OpenAI/Google API directly from browser (requires API key in settings)
 
 **Localized screenshots (in language-utils.js):**
+
 - Each screenshot has `localizedImages` object keyed by language code (e.g., `{ 'en': {...}, 'de': {...} }`)
 - `detectLanguageFromFilename()` - parses suffixes like `_de`, `-fr`, `_pt-br` from filenames
 - `getScreenshotImage(screenshot)` - returns image for current language with fallback chain
@@ -105,6 +113,7 @@ npm run tauri:dev
 - Duplicate detection shows dialog with Replace/Create New/Skip options when uploading matching files
 
 **UI Components:**
+
 - Right sidebar has three tabs: Background, Device, Text
 - Collapsible toggle sections for Noise, Shadow, Border, Headline, Subheadline
 - Device tab has 2D/3D mode selector with different controls for each mode
@@ -115,6 +124,7 @@ npm run tauri:dev
 ## Key Functions
 
 **Project & Screenshots (app.js):**
+
 - `createProject()` / `deleteProject()` / `switchProject()` - async, must await and call `updateProjectSelector()` after
 - `handleFiles()` - processes uploaded images, detects language, shows duplicate dialog if needed
 - `createNewScreenshot()` - creates screenshot entry with localized image support
@@ -125,6 +135,7 @@ npm run tauri:dev
 - `updateSidePreviews()` - renders adjacent screenshots in side preview canvases
 
 **Language Utils (language-utils.js):**
+
 - `detectLanguageFromFilename()` - extracts language code from filename suffixes
 - `getBaseFilename()` - strips language suffix and extension for matching
 - `findScreenshotByBaseFilename()` - finds existing screenshot with same base name
