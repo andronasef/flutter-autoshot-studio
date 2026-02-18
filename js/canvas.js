@@ -535,7 +535,8 @@ function drawText() {
 
   // Draw headline
   if (headline) {
-    ctx.direction = isRtlLanguage(headlineLang) ? "rtl" : "ltr";
+    ctx.direction =
+      isRtlLanguage(headlineLang) || hasRtlChars(headline) ? "rtl" : "ltr";
     const fontStyle = text.headlineItalic ? "italic" : "normal";
     ctx.font = `${fontStyle} ${text.headlineWeight} ${headlineLayout.headlineSize}px ${text.headlineFont}`;
     ctx.fillStyle = text.headlineColor;
@@ -595,7 +596,10 @@ function drawText() {
 
   // Draw subheadline (always below headline visually)
   if (subheadline) {
-    ctx.direction = isRtlLanguage(subheadlineLang) ? "rtl" : "ltr";
+    ctx.direction =
+      isRtlLanguage(subheadlineLang) || hasRtlChars(subheadline)
+        ? "rtl"
+        : "ltr";
     const subFontStyle = text.subheadlineItalic ? "italic" : "normal";
     const subWeight = text.subheadlineWeight || "400";
     ctx.font = `${subFontStyle} ${subWeight} ${subheadlineLayout.subheadlineSize}px ${text.subheadlineFont || text.headlineFont}`;

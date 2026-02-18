@@ -49,14 +49,8 @@ function updateTextUI(text) {
     : text.subheadline || "";
 
   document.getElementById("headline-text").value = headlineText;
-  document.getElementById("headline-text").dir = isRtlLanguage(headlineLang)
-    ? "rtl"
-    : "ltr";
-  document.getElementById("subheadline-text").dir = isRtlLanguage(
-    subheadlineLang,
-  )
-    ? "rtl"
-    : "ltr";
+  document.getElementById("headline-text").dir = "auto";
+  document.getElementById("subheadline-text").dir = "auto";
   document.getElementById("headline-font").value = text.headlineFont;
   updateFontPickerPreview();
   document.getElementById("headline-size").value = headlineLayout.headlineSize;
