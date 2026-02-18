@@ -1,5 +1,14 @@
 /* ===== Language flags, Google Fonts cfg, font loading, font picker UI ===== */
 /* auto-split from app.js lines 722–2553 */
+// Languages that use right-to-left script
+const RTL_LANGUAGES = new Set(["ar", "he", "fa", "ur", "yi", "dv"]);
+
+/** Returns true if the given language code is RTL */
+function isRtlLanguage(lang) {
+  if (!lang) return false;
+  return RTL_LANGUAGES.has(lang) || RTL_LANGUAGES.has(lang.split("-")[0]);
+}
+
 // Language flags mapping
 const languageFlags = {
   en: "🇺🇸",
@@ -1831,4 +1840,3 @@ function updateElementFontPickerPreview(el) {
   preview.textContent = fontName;
   preview.style.fontFamily = fontValue;
 }
-

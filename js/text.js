@@ -49,6 +49,14 @@ function updateTextUI(text) {
     : text.subheadline || "";
 
   document.getElementById("headline-text").value = headlineText;
+  document.getElementById("headline-text").dir = isRtlLanguage(headlineLang)
+    ? "rtl"
+    : "ltr";
+  document.getElementById("subheadline-text").dir = isRtlLanguage(
+    subheadlineLang,
+  )
+    ? "rtl"
+    : "ltr";
   document.getElementById("headline-font").value = text.headlineFont;
   updateFontPickerPreview();
   document.getElementById("headline-size").value = headlineLayout.headlineSize;
@@ -136,4 +144,3 @@ function handleFiles(files) {
     Array.from(files).filter((f) => f.type.startsWith("image/")),
   );
 }
-

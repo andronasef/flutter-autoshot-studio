@@ -535,6 +535,7 @@ function drawText() {
 
   // Draw headline
   if (headline) {
+    ctx.direction = isRtlLanguage(headlineLang) ? "rtl" : "ltr";
     const fontStyle = text.headlineItalic ? "italic" : "normal";
     ctx.font = `${fontStyle} ${text.headlineWeight} ${headlineLayout.headlineSize}px ${text.headlineFont}`;
     ctx.fillStyle = text.headlineColor;
@@ -594,6 +595,7 @@ function drawText() {
 
   // Draw subheadline (always below headline visually)
   if (subheadline) {
+    ctx.direction = isRtlLanguage(subheadlineLang) ? "rtl" : "ltr";
     const subFontStyle = text.subheadlineItalic ? "italic" : "normal";
     const subWeight = text.subheadlineWeight || "400";
     ctx.font = `${subFontStyle} ${subWeight} ${subheadlineLayout.subheadlineSize}px ${text.subheadlineFont || text.headlineFont}`;
@@ -639,6 +641,7 @@ function drawText() {
     if (layoutSettings.position === "bottom") {
       ctx.textBaseline = "bottom";
     }
+    ctx.direction = "ltr"; // reset after subheadline
   }
 }
 
@@ -915,4 +918,3 @@ async function exportAllLanguages() {
   link.click();
   URL.revokeObjectURL(link.href);
 }
-

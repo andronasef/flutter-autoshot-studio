@@ -140,6 +140,9 @@ function syncUIWithState() {
     ? txt.headlines[headlineLang] || ""
     : txt.headline || "";
   document.getElementById("headline-text").value = currentHeadline;
+  document.getElementById("headline-text").dir = isRtlLanguage(headlineLang)
+    ? "rtl"
+    : "ltr";
   document.getElementById("headline-font").value = txt.headlineFont;
   updateFontPickerPreview();
   document.getElementById("headline-size").value = headlineLayout.headlineSize;
@@ -167,6 +170,11 @@ function syncUIWithState() {
     ? txt.subheadlines[subheadlineLang] || ""
     : txt.subheadline || "";
   document.getElementById("subheadline-text").value = currentSubheadline;
+  document.getElementById("subheadline-text").dir = isRtlLanguage(
+    subheadlineLang,
+  )
+    ? "rtl"
+    : "ltr";
   document.getElementById("subheadline-font").value =
     txt.subheadlineFont || txt.headlineFont;
   document.getElementById("subheadline-size").value =
@@ -253,4 +261,3 @@ function syncUIWithState() {
   updatePopoutsList();
   updatePopoutProperties();
 }
-
