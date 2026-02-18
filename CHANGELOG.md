@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.4.2] — 2026-02-18
+
+### Changed
+
+- **ZIP export folder structure** — exported ZIP now follows the Google Play Store upload layout: `{locale}/images/{folder}/{num}_{locale}.jpeg`; all tablets (7" and 10") map to `sevenInchScreenshots`, phones to `phoneScreenshots`; images are exported as JPEG instead of PNG
+
+---
+
 ## [1.4.1] — 2026-02-18
 
 ### Fixed
