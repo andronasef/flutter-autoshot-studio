@@ -97,6 +97,26 @@ const FONTS_STORE = "fonts";
 let currentProjectId = "default";
 let projects = [{ id: "default", name: "Default Project", screenshotCount: 0 }];
 
+let _saveFeedbackTimer = null;
+let _saveFeedbackHideTimer = null;
+
+function showSaveFeedback() {
+  // Debounce: only show "Saved ✓" after saves have settled (500ms of no further saves)
+  clearTimeout(_saveFeedbackTimer);
+  _saveFeedbackTimer = setTimeout(() => {
+    const el = document.getElementById("save-status");
+    if (el) {
+      el.textContent = "Saved ✓";
+      el.classList.add("saved");
+      clearTimeout(_saveFeedbackHideTimer);
+      _saveFeedbackHideTimer = setTimeout(() => {
+        el.textContent = "Auto-saved";
+        el.classList.remove("saved");
+      }, 2000);
+    }
+  }, 500);
+}
+
 function openDatabase() {
   return new Promise((resolve, reject) => {
     try {
@@ -433,6 +453,28 @@ function initSync() {
   initFontPicker();
   updateGradientStopsUI();
   updateCanvas();
+
+  // Save button: immediate save with visual feedback
+  document.getElementById("save-btn").addEventListener("click", () => {
+    saveState();
+    const btn = document.getElementById("save-btn");
+    const el = document.getElementById("save-status");
+    btn.classList.add("saved");
+    clearTimeout(_saveFeedbackTimer);
+    clearTimeout(_saveFeedbackHideTimer);
+    if (el) {
+      el.textContent = "Saved ✓";
+      el.classList.add("saved");
+    }
+    _saveFeedbackHideTimer = setTimeout(() => {
+      btn.classList.remove("saved");
+      if (el) {
+        el.textContent = "Auto-saved";
+        el.classList.remove("saved");
+      }
+    }, 2000);
+  });
+
   // Then load saved data asynchronously
   init();
 }
@@ -509,6 +551,7 @@ function saveState() {
     const transaction = db.transaction([PROJECTS_STORE], "readwrite");
     const store = transaction.objectStore(PROJECTS_STORE);
     store.put(stateToSave);
+    showSaveFeedback();
   } catch (e) {
     console.error("Error saving state:", e);
   }
@@ -1119,4 +1162,3 @@ function duplicateScreenshot(index) {
   updateGradientStopsUI();
   updateCanvas();
 }
-

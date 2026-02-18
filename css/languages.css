@@ -542,3 +542,53 @@
   color: var(--text-secondary);
 }
 
+/* Translation instructions */
+.translate-instructions-section {
+  margin: 8px 0;
+}
+
+.translate-instructions-toggle {
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+  padding: 4px 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.translate-instructions-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.translate-instructions-toggle::before {
+  content: "▶";
+  font-size: 9px;
+  transition: transform 0.2s;
+  color: var(--text-tertiary);
+}
+
+details[open] .translate-instructions-toggle::before {
+  transform: rotate(90deg);
+}
+
+.translate-instructions-input {
+  width: 100%;
+  margin-top: 6px;
+  padding: 8px 10px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-family: inherit;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.translate-instructions-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}

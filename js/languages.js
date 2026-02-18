@@ -378,6 +378,12 @@ function openTranslateModal(target) {
   });
 
   document.getElementById("translate-modal").classList.add("visible");
+
+  // Load saved translation instructions
+  const savedInstructions =
+    localStorage.getItem("translationInstructions") || "";
+  const instrField = document.getElementById("translate-instructions");
+  if (instrField) instrField.value = savedInstructions;
 }
 
 function updateTranslateSourcePreview() {
@@ -520,6 +526,15 @@ async function aiTranslateAll() {
       .map((lang) => `${languageNames[lang]} (${lang})`)
       .join(", ");
 
+    // Read custom translation instructions
+    const instructions =
+      document.getElementById("translate-instructions")?.value?.trim() ||
+      localStorage.getItem("translationInstructions") ||
+      "";
+    const customInstructionsNote = instructions
+      ? `\n\nAdditional instructions from the user: ${instructions}`
+      : "";
+
     const prompt = `You are a professional translator for App Store screenshot marketing copy. Translate the following text from ${languageNames[sourceLang]} to these languages: ${targetLangNames}.
 
 The text is a short marketing headline/tagline for an app that must fit on a screenshot, so keep translations:
@@ -538,7 +553,7 @@ Respond ONLY with a valid JSON object mapping language codes to translations. Do
 Example format:
 {"de": "German translation", "fr": "French translation"}
 
-Translate to these language codes: ${targetLangs.join(", ")}`;
+Translate to these language codes: ${targetLangs.join(", ")}${customInstructionsNote}`;
 
     let responseText;
 
@@ -775,6 +790,11 @@ function showTranslateConfirmDialog(providerName) {
                     </div>
                 </div>
 
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; cursor: default;">Translation Instructions (optional)</label>
+                    <textarea id="translate-all-instructions" placeholder="e.g. Use informal tone, avoid literal translation, keep it punchy..." style="width: 100%; padding: 8px 10px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 12px; font-family: inherit; resize: vertical; box-sizing: border-box;" rows="2">${(localStorage.getItem("translationInstructions") || "").replace(/"/g, "&quot;")}</textarea>
+                </div>
+
                 <div class="modal-buttons">
                     <button class="modal-btn modal-btn-cancel" id="translate-cancel">Cancel</button>
                     <button class="modal-btn modal-btn-confirm" id="translate-confirm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">Translate</button>
@@ -808,6 +828,9 @@ function showTranslateConfirmDialog(providerName) {
     }
 
     confirmBtn.addEventListener("click", () => {
+      const instrEl = document.getElementById("translate-all-instructions");
+      if (instrEl)
+        localStorage.setItem("translationInstructions", instrEl.value);
       overlay.remove();
       resolve(select.value);
     });
@@ -937,6 +960,12 @@ async function translateAllText() {
       .map((lang) => `${languageNames[lang]} (${lang})`)
       .join(", ");
 
+    // Read custom instructions (set in showTranslateConfirmDialog or single translate modal)
+    const instructions = localStorage.getItem("translationInstructions") || "";
+    const customInstructionsNote = instructions
+      ? `\n\nAdditional instructions from the user: ${instructions}`
+      : "";
+
     // Group texts by screenshot for context-aware prompt
     const screenshotGroups = {};
     textsToTranslate.forEach((item, i) => {
@@ -988,7 +1017,7 @@ Respond ONLY with a valid JSON object. The structure should be:
 }
 
 Where the keys (0, 1, etc.) correspond to the text indices [N] shown above.
-Translate to these language codes: ${targetLangs.join(", ")}`;
+Translate to these language codes: ${targetLangs.join(", ")}${customInstructionsNote}`;
 
     let responseText;
 
@@ -1186,3 +1215,129 @@ function setTranslateStatus(message, type) {
   status.className = "ai-translate-status" + (type ? " " + type : "");
 }
 
+// ─── Text Editor Spreadsheet Modal ──────────────────────────────────────────
+
+function openTextEditorModal() {
+  renderTextEditorTable();
+  document.getElementById("text-editor-modal").classList.add("visible");
+}
+
+function closeTextEditorModal() {
+  document.getElementById("text-editor-modal").classList.remove("visible");
+  // Applying changes happens live (inputs update state on each change)
+  syncUIWithState();
+  updateCanvas();
+  saveState();
+}
+
+function renderTextEditorTable() {
+  const container = document.getElementById("text-editor-content");
+  if (!container) return;
+
+  const langs = state.projectLanguages;
+
+  // Build table
+  let html = '<table class="text-editor-table"><thead><tr>';
+  html += '<th style="width:30px">#</th>';
+  html += '<th style="width:90px">Screenshot</th>';
+  langs.forEach((lang) => {
+    const flag = languageFlags[lang] || "🏳️";
+    const name = languageNames[lang] || lang.toUpperCase();
+    html += `<th class="lang-header" colspan="2">${flag} ${name}</th>`;
+  });
+  html += "</tr>";
+
+  // Sub-header row for Headline / Sub
+  html += "<tr>";
+  html += "<th></th><th></th>";
+  langs.forEach(() => {
+    html +=
+      '<th class="lang-header" style="font-weight:400; font-size:11px; color: var(--text-tertiary);">Headline</th>';
+    html +=
+      '<th style="font-weight:400; font-size:11px; color: var(--text-tertiary);">Sub</th>';
+  });
+  html += "</tr></thead><tbody>";
+
+  state.screenshots.forEach((screenshot, index) => {
+    const displayName = screenshot.name
+      ? screenshot.name.replace(/\.[^.]+$/, "").substring(0, 20)
+      : `Screen ${index + 1}`;
+
+    html += `<tr data-index="${index}">`;
+    html += `<td class="screenshot-num">${index + 1}</td>`;
+    html += `<td class="screenshot-name" title="${screenshot.name || ""}">${displayName}</td>`;
+
+    langs.forEach((lang) => {
+      const text = screenshot.text || {};
+      const headline = (text.headlines && text.headlines[lang]) || "";
+      const sub = (text.subheadlines && text.subheadlines[lang]) || "";
+      const isRtl = isRtlLanguage(lang);
+
+      html += `<td class="lang-col">
+        <textarea
+          class="te-headline"
+          data-index="${index}"
+          data-lang="${lang}"
+          rows="2"
+          dir="${isRtl ? "rtl" : "ltr"}"
+          placeholder="Headline..."
+        >${escapeHtml(headline)}</textarea>
+      </td>`;
+      html += `<td>
+        <textarea
+          class="te-subheadline"
+          data-index="${index}"
+          data-lang="${lang}"
+          rows="2"
+          dir="${isRtl ? "rtl" : "ltr"}"
+          placeholder="Sub..."
+        >${escapeHtml(sub)}</textarea>
+      </td>`;
+    });
+
+    html += "</tr>";
+  });
+
+  html += "</tbody></table>";
+  container.innerHTML = html;
+
+  // Auto-resize textareas on load and input + wire up live save
+  container.querySelectorAll("textarea").forEach((ta) => {
+    autoResizeTextarea(ta);
+    ta.addEventListener("input", () => {
+      autoResizeTextarea(ta);
+      const idx = parseInt(ta.dataset.index);
+      const lang = ta.dataset.lang;
+      const screenshot = state.screenshots[idx];
+      if (!screenshot || !screenshot.text) return;
+
+      if (ta.classList.contains("te-headline")) {
+        if (!screenshot.text.headlines) screenshot.text.headlines = {};
+        if (!screenshot.text.headlineLanguages.includes(lang)) {
+          screenshot.text.headlineLanguages.push(lang);
+        }
+        screenshot.text.headlines[lang] = ta.value;
+      } else {
+        if (!screenshot.text.subheadlines) screenshot.text.subheadlines = {};
+        if (!screenshot.text.subheadlineLanguages.includes(lang)) {
+          screenshot.text.subheadlineLanguages.push(lang);
+        }
+        screenshot.text.subheadlines[lang] = ta.value;
+        if (ta.value.trim()) screenshot.text.subheadlineEnabled = true;
+      }
+    });
+  });
+}
+
+function autoResizeTextarea(ta) {
+  ta.style.height = "auto";
+  ta.style.height = Math.max(36, ta.scrollHeight) + "px";
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}

@@ -1135,6 +1135,32 @@ function setupEventListeners() {
     }
   });
 
+  // Save translate instructions to localStorage on change
+  document
+    .getElementById("translate-instructions")
+    .addEventListener("change", (e) => {
+      localStorage.setItem("translationInstructions", e.target.value);
+    });
+
+  // Text editor modal
+  document.getElementById("text-editor-btn").addEventListener("click", () => {
+    openTextEditorModal();
+  });
+
+  document.getElementById("text-editor-close").addEventListener("click", () => {
+    closeTextEditorModal();
+  });
+
+  document.getElementById("text-editor-done").addEventListener("click", () => {
+    closeTextEditorModal();
+  });
+
+  document
+    .getElementById("text-editor-modal")
+    .addEventListener("click", (e) => {
+      if (e.target.id === "text-editor-modal") closeTextEditorModal();
+    });
+
   // About modal
   document.getElementById("about-btn").addEventListener("click", () => {
     document.getElementById("about-modal").classList.add("visible");
@@ -1955,4 +1981,3 @@ function setupEventListeners() {
     updateCanvas(); // Keep export canvas in sync
   });
 }
-

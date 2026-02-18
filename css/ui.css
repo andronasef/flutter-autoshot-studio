@@ -793,3 +793,133 @@
   color: #ff453a;
 }
 
+/* Save status indicator */
+.save-status {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  padding: 2px 4px;
+  margin-top: 4px;
+  transition:
+    color 0.3s,
+    opacity 0.3s;
+  opacity: 0.6;
+}
+
+.save-status.saved {
+  color: #34c759;
+  opacity: 1;
+}
+
+/* Save button saved state */
+#save-btn.saved svg {
+  stroke: #34c759;
+}
+
+/* Text Editor Modal */
+.text-editor-modal {
+  max-width: 90vw;
+  width: 900px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.text-editor-content {
+  overflow-x: auto;
+  overflow-y: auto;
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.text-editor-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.text-editor-table th {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-weight: 500;
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  white-space: nowrap;
+}
+
+.text-editor-table th.lang-header {
+  border-left: 1px solid var(--border);
+}
+
+.text-editor-table td {
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
+  vertical-align: top;
+}
+
+.text-editor-table td.screenshot-num {
+  color: var(--text-tertiary);
+  font-size: 11px;
+  padding: 8px 6px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.text-editor-table td.screenshot-name {
+  color: var(--text-secondary);
+  font-size: 11px;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 8px 8px;
+  vertical-align: middle;
+}
+
+.text-editor-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.text-editor-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.text-editor-label {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.text-editor-cell textarea {
+  width: 180px;
+  min-height: 36px;
+  padding: 4px 6px;
+  background: var(--bg-tertiary);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-family: inherit;
+  resize: none;
+  transition: border-color 0.15s;
+  overflow: hidden;
+}
+
+.text-editor-cell textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--bg-hover);
+}
+
+.text-editor-table td.lang-col {
+  border-left: 1px solid var(--border);
+  padding: 6px 8px;
+}
